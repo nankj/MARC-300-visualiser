@@ -1,0 +1,95 @@
+/*
+ * bsv.shell.css
+ * Shell styles
+ */
+ 
+ .bsv-shell-head,  .bsv-shell-head-btn, .bsv-shell-main, .bsv-shell-main-test, 
+ .bsv-shell-main-live, .bsv-shell-main-test-width, .bsv-shell-main-test-MARC, 
+ .bsv-shell-main-live-width, .bsv-shell-slider, .bsv-shell-foot {
+ 	position: absolute;
+ }
+
+.bsv-shell-head {
+	top: 	0;
+	left: 	0;
+	right: 	0;
+	height: 40px; /*3vw*/
+	background: lightgray;
+}
+
+.bsv-shell-head-btn {
+	top: 	4px; /*0.3vw;*/
+	left: 	4px; /*0.3vw;*/
+	height: 32px;
+	width: 	80px;
+	background: orange;
+}
+	.bsv-shell-head-btn:hover {
+		background: darkorange;
+		cursor:		pointer;
+	}
+
+#btn2 {
+	left:	88px;
+}
+
+#btn3 {
+	left:	172px;
+}
+
+.bsv-shell-main {
+	top:	40px;
+	left:	0;
+	bottom:	40px;
+	right: 	0;
+	background: red;
+}
+
+.bsv-shell-main-test,
+.bsv-shell-main-live {
+	top:	0.3vw;
+	left:	0.3vw;
+	right:	0.3vw;
+	bottom:	0.3vw;
+	background: blue;
+}
+
+.bsv-shell-main-test-width, 
+.bsv-shell-main-test-MARC,
+.bsv-shell-main-live-width {
+	top:	0.3vw;
+	bottom: 0.3vw;
+	background: steelblue;
+}
+
+.bsv-shell-main-test-width,
+.bsv-shell-main-live-width {
+	left:	0.3vw;
+	width: 	48.65vw;
+}
+
+.bsv-shell-main-test-MARC {
+	left:	49.25vw;
+	width:	48.65vw;
+}
+
+.bsv-shell-main-live {
+	background: pink;
+}
+
+.bsv-shell-slider {
+	top:	40px;
+	width: 450px;
+	bottom:	40px;
+	right: 	-415px;
+	background: gray;
+	border-radius:		12px 0 0 12px;
+}
+
+.bsv-shell-foot {
+	bottom:	0;
+	left:	0;
+	right:	0;
+	height:	40px;
+	background: black;
+}

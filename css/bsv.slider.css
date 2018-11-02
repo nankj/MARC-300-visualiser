@@ -1,0 +1,70 @@
+/*
+ * bsv.slider.css
+ * Slider styles
+ */
+ 
+.bsv-slider-close,
+.bsv-slider-params,
+.bsv-slider-data {
+ 	position: absolute;
+ 	font-size:	24px;
+ }
+
+.bsv-slider-close {
+	margin: 20px 0 0 15px;
+	padding:	4px 6px 1px 6px;
+	border-radius: 5px;
+}
+	.bsv-slider-close:hover {
+		background: darkred;
+		cursor:		pointer;
+		color:		white;
+	}
+
+.bsv-slider-params, .bsv-slider-data {
+	left: 		35px;
+	right:		20px;
+}
+
+.bsv-slider-params { 
+	top:	70px;
+}
+
+.bsv-slider-data { 
+	top:	410px;
+}
+
+
+legend {
+    color: #fff;
+    padding: 3px 6px;
+}
+
+input,
+label,
+button {
+    width: 	43%;
+ 	padding: 15px;
+ 	font-size: 0.8em;
+}
+
+input {
+    margin: .5rem 0;
+    padding: .5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+label {
+    display: inline-block;
+}
+
+.button {
+    margin: 15px 0 25px 0;
+    background:	darkgray;
+}
+
+#bsv-slider-data-csv {
+	margin:	0 0 15px 15px;
+	width:	83.5%;
+}
