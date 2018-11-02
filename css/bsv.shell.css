@@ -3,9 +3,8 @@
  * Shell styles
  */
  
- .bsv-shell-head,  .bsv-shell-head-btn, .bsv-shell-main, .bsv-shell-main-test, 
- .bsv-shell-main-live, .bsv-shell-main-test-width, .bsv-shell-main-test-MARC, 
- .bsv-shell-main-live-width, .bsv-shell-slider, .bsv-shell-foot {
+ .bsv-shell-head,  .bsv-shell-head-btn, .bsv-shell-main, 
+ .bsv-shell-slider, .bsv-shell-foot {
  	position: absolute;
  }
 
@@ -43,38 +42,6 @@
 	bottom:	40px;
 	right: 	0;
 	background: red;
-}
-
-.bsv-shell-main-test,
-.bsv-shell-main-live {
-	top:	0.3vw;
-	left:	0.3vw;
-	right:	0.3vw;
-	bottom:	0.3vw;
-	background: blue;
-}
-
-.bsv-shell-main-test-width, 
-.bsv-shell-main-test-MARC,
-.bsv-shell-main-live-width {
-	top:	0.3vw;
-	bottom: 0.3vw;
-	background: steelblue;
-}
-
-.bsv-shell-main-test-width,
-.bsv-shell-main-live-width {
-	left:	0.3vw;
-	width: 	48.65vw;
-}
-
-.bsv-shell-main-test-MARC {
-	left:	49.25vw;
-	width:	48.65vw;
-}
-
-.bsv-shell-main-live {
-	background: pink;
 }
 
 .bsv-shell-slider {

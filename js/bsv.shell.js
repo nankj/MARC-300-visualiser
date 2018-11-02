@@ -16,20 +16,19 @@ bsv.shell = (function() {
 			+		'<div class="bsv-shell-head-btn" id="btn3"></div>'
 			+	'</div>'
 			+	'<div class="bsv-shell-main">'	
-			+		'<div class="bsv-shell-main-live">'
+/*			+		'<div class="bsv-shell-main-live">'
 			+			'<div class="bsv-shell-main-live-width"></div>'
 			+		'</div>'			
 			+		'<div class="bsv-shell-main-test">'
 			+			'<div class="bsv-shell-main-test-width"></div>'
 			+			'<div class="bsv-shell-main-test-MARC" ></div>'
-			+		'</div>'
+			+		'</div>'  */
 			+	'</div>'
 			+	'<div class="bsv-shell-slider"></div>'
 			+	'<div class="bsv-shell-foot"></div>'			
 		},
 		stateMap  = { 
 			$container 		: null,
-			is_live_open	: true,
 		},
 		jqueryMap =	{},
 		
@@ -47,48 +46,19 @@ bsv.shell = (function() {
 		jqueryMap = { 
 			$container 	: $container,
 			$slider		: $container.find( '.bsv-shell-slider'),
+			$main		: $container.find( '.bsv-shell-main'),
 			$test		: $container.find( '.bsv-shell-main-test'),
-			$live		: $container.find( '.bsv-shell-main-live'),
-			$btn		: $container.find( '#btn1'),
+			$live		: $container.find( '.bsv-shell-main-live'), 
+//			$btn		: $container.find( '#btn1'),
 			$btn2		: $container.find( '#btn2'),
 			$btn3		: $container.find( '#btn3'),
 		};
 	};
 	// End DOM method /setJqueryMap/	
 
-	// Begin DOM method /toggleTest/
-	// Purpose:		Switch between test suite and live tool
-	// Arguments: 	switch_to_test (boolean): true, to test; false, to live
-	// Returns:	boolean
-	//		* true		toggled
-	//		* false 	not toggled
-	// State:	sets stateMap.is_live_open
-	//		* true		test suite
-	//		* false		live tool
-	
-	toggleTest = function ( switch_to_test ) {
-		if (switch_to_test) {
-			jqueryMap.$test.removeClass('bsv-x-clearfloat');
-			jqueryMap.$live.addClass('bsv-x-clearfloat');
-			jqueryMap.$btn.text('Live').attr('title', 'Click to switch to live version');
-			stateMap.is_live_open = false;
-			return true;
-		} 
-	jqueryMap.$live.removeClass('bsv-x-clearfloat');
-	jqueryMap.$test.addClass('bsv-x-clearfloat');	
-	jqueryMap.$btn.text('Test').attr('title', 'Click to switch to test suite');
-	stateMap.is_live_open = true;
-	return true;
-	};
-	// End DOM method /toggleTest/
-
 	//----------------END DOM METHODS---------------------------------
 
 	//----------------BEGIN EVENT HANDLERS----------------------------
-	onClickToggle = function ( event ) {
-		toggleTest (stateMap.is_live_open);
-		return false;
-	};
 	
 	onClickParams = function ( event ) {
 		console.log( bsv.slider.getParams('ppmm') );
@@ -110,10 +80,6 @@ bsv.shell = (function() {
 		setJqueryMap();
 				
 		// initialise buttons and bind click handlers
-		jqueryMap.$btn
-			.text('Test')
-			.attr('title', 'Click to switch to test suite')
-			.click( onClickToggle );
 
 		jqueryMap.$btn2
 			.text('Params')
@@ -128,12 +94,10 @@ bsv.shell = (function() {
 		// set view to live tool
 		jqueryMap.$test
 			.addClass('bsv-x-clearfloat');
-		// initialise slider
+		// initialise slider and shelves modules
 		bsv.slider.initModule(jqueryMap.$slider);
-		
+		bsv.shelves.initModule(jqueryMap.$main);
 
-//		test data from slider module
-//		setTimeout( function () { console.log(bsv.slider.getData()[2]); }, 12000);		
 
 	};
 	// End Public method /initModule/

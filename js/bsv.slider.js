@@ -113,7 +113,7 @@ bsv.slider = (function() {
 		
 		setJqueryMap, toggleSlider, setParamMap, initModule,
 		browserSupportFileUpload, uploadCSV, getData, getParams,
-		onChangeUploadCSV, onClickParamBtn, onClickSlide, onChangeExampleData;
+		onChangeUploadCSV, onClickParamBtn, onClickSlide, onClickExampleData;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -279,7 +279,6 @@ bsv.slider = (function() {
 		jqueryMap.$dataenter
 			.click( onClickExampleData );
 
-// TODO add event handler to change data to default: attach to Use Data button
 
 	};
 	// End Public method /initModule/

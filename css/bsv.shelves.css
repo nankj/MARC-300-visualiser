@@ -1,0 +1,41 @@
+/*
+ * bsv.shelves.css
+ * Shelves styles
+*/
+.bsv-shelves-test, .bsv-shelves-live, .bsv-shelves-test-width, 
+.bsv-shelves-test-MARC, .bsv-shelves-live-width, .bsv-shell-slider, 
+.bsv-shell-foot {
+ 	position: absolute;
+ }
+
+.bsv-shelves-test,
+.bsv-shelves-live {
+	top:	0.3vw;
+	left:	0.3vw;
+	right:	0.3vw;
+	bottom:	0.3vw;
+	background: blue;
+}
+
+.bsv-shelves-test-width, 
+.bsv-shelves-test-MARC,
+.bsv-shelves-live-width {
+	top:	0.3vw;
+	bottom: 0.3vw;
+	background: steelblue;
+}
+
+.bsv-shelves-test-width,
+.bsv-shelves-live-width {
+	left:	0.3vw;
+	width: 	48.65vw;
+}
+
+.bsv-shelves-test-MARC {
+	left:	49.25vw;
+	width:	48.65vw;
+}
+
+.bsv-shelves-live {
+	background: pink;
+}
