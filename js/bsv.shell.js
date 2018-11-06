@@ -14,15 +14,9 @@ bsv.shell = (function() {
 			+		'<div class="bsv-shell-head-btn" id="btn1"></div>'
 			+		'<div class="bsv-shell-head-btn" id="btn2"></div>'
 			+		'<div class="bsv-shell-head-btn" id="btn3"></div>'
+			+		'<div class="bsv-shell-head-btn" id="btn4">render</div>'
 			+	'</div>'
 			+	'<div class="bsv-shell-main">'	
-/*			+		'<div class="bsv-shell-main-live">'
-			+			'<div class="bsv-shell-main-live-width"></div>'
-			+		'</div>'			
-			+		'<div class="bsv-shell-main-test">'
-			+			'<div class="bsv-shell-main-test-width"></div>'
-			+			'<div class="bsv-shell-main-test-MARC" ></div>'
-			+		'</div>'  */
 			+	'</div>'
 			+	'<div class="bsv-shell-slider"></div>'
 			+	'<div class="bsv-shell-foot"></div>'			
@@ -49,7 +43,6 @@ bsv.shell = (function() {
 			$main		: $container.find( '.bsv-shell-main'),
 			$test		: $container.find( '.bsv-shell-main-test'),
 			$live		: $container.find( '.bsv-shell-main-live'), 
-//			$btn		: $container.find( '#btn1'),
 			$btn2		: $container.find( '#btn2'),
 			$btn3		: $container.find( '#btn3'),
 		};

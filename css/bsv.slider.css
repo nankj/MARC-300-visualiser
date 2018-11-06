@@ -11,9 +11,11 @@
  }
 
 .bsv-slider-close {
-	margin: 20px 0 0 15px;
-	padding:	4px 6px 1px 6px;
-	border-radius: 5px;
+	margin: 20px 0 0 45px;
+	left: -25px;
+	padding:	4px 6px 1px 6px;	
+/*	border-radius: 5px;*/
+	border-radius: 50% 0 0 50%;
 }
 	.bsv-slider-close:hover {
 		background: darkred;

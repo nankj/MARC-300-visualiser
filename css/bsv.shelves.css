@@ -14,28 +14,57 @@
 	left:	0.3vw;
 	right:	0.3vw;
 	bottom:	0.3vw;
-	background: blue;
+	background: beige;
+	overflow: scroll;
 }
 
 .bsv-shelves-test-width, 
 .bsv-shelves-test-MARC,
 .bsv-shelves-live-width {
-	top:	0.3vw;
+	top:	5vw;
 	bottom: 0.3vw;
-	background: steelblue;
+	background: beige;
 }
 
-.bsv-shelves-test-width,
+.bsv-shelves-test-width {
+	left:	7vw;
+	width: 	36vw;
+}
+
 .bsv-shelves-live-width {
-	left:	0.3vw;
+	left:	7vw;
 	width: 	48.65vw;
 }
 
 .bsv-shelves-test-MARC {
-	left:	49.25vw;
-	width:	48.65vw;
+	left:	57.9vw;
+	width:	37vw;
 }
 
 .bsv-shelves-live {
 	background: pink;
+}
+
+.shelf {
+  fill: gray;
+}
+
+.thin.tall{
+  fill: steelblue;
+  fill-opacity: 0.4;
+}
+
+.thick.tall{
+  fill: dodgerblue;
+  fill-opacity: 0.6;
+}
+
+.thin.short {
+  fill: #4CAF50;
+  fill-opacity: 0.4;
+}
+
+.thick.short {
+  fill: #009688;
+  fill-opacity: 0.4;
 }

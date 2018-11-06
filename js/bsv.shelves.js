@@ -1,6 +1,6 @@
 /*
- * bsv.shell.js
- * Shell module for Bookshelf Visualiser
+ * bsv.shelves.js
+ * Shelves module for Bookshelf Visualiser
  */
  
  /* global variables: $, bsv */
@@ -10,13 +10,13 @@ bsv.shelves = (function() {
 	var 
 		configMap = {
 			main_html : String()
-			+	'<div class="bsv-shelves-live">'
-			+		'<div class="bsv-shelves-live-width"></div>'
-			+	'</div>'			
 			+	'<div class="bsv-shelves-test">'
 			+		'<div class="bsv-shelves-test-width"></div>'
 			+		'<div class="bsv-shelves-test-MARC" ></div>'
 			+	'</div>'
+			+	'<div class="bsv-shelves-live">'
+			+		'<div class="bsv-shelves-live-width"></div>'
+			+	'</div>'			
 		},
 		stateMap  = { 
 			$container 		: null,
@@ -24,7 +24,8 @@ bsv.shelves = (function() {
 		},
 		jqueryMap =	{},
 		
-		setJqueryMap, makeShelf, fillShelves;
+		setJqueryMap, toggleTest, makeShelf, fillShelf,
+		onClickToggle, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -36,9 +37,12 @@ bsv.shelves = (function() {
 		var $container = stateMap.$container;
 		jqueryMap = { 
 			$shelves 	: $container,
-			$test		: $container.find( '.bsv-shelves-live'),
-			$live		: $container.find( '.bsv-shelves-test'),
-			$btn		: $('div').find( '#btn1' ),
+			$test		: $container.find( '.bsv-shelves-test'),
+			$testw		: $container.find( '.bsv-shelves-test-width'),
+			$live		: $container.find( '.bsv-shelves-live'),
+			$livew		: $container.find( '.bsv-shelves-live-width'),
+			$btn1		: $('div').find( '#btn1' ),
+			$btn4		: $('div').find( '#btn4' ),
 			}
 	};
 	// End DOM method /setJqueryMap/	
@@ -57,23 +61,128 @@ bsv.shelves = (function() {
 		if (switch_to_test) {
 			jqueryMap.$test.removeClass('bsv-x-clearfloat');
 			jqueryMap.$live.addClass('bsv-x-clearfloat');
-			jqueryMap.$btn.text('Live').attr('title', 'Click to switch to live version');
+			jqueryMap.$btn1.text('Live').attr('title', 'Click to switch to live version');
 			stateMap.is_live_open = false;
 			return true;
 		} 
 	jqueryMap.$live.removeClass('bsv-x-clearfloat');
 	jqueryMap.$test.addClass('bsv-x-clearfloat');	
-	jqueryMap.$btn.text('Test').attr('title', 'Click to switch to test suite');
+	jqueryMap.$btn1.text('Test').attr('title', 'Click to switch to test suite');
 	stateMap.is_live_open = true;
 	return true;
 	};
 	// End DOM method /toggleTest/ 
 
+	// Begin DOM method /makeShelf/ 
+	function makeShelf(id){
+		var newShelf = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		var div = jqueryMap.$testw;
+		newShelf.setAttributeNS(null, "viewBox", "0 0 1000 310");
+		div.append(newShelf);
+
+		var g_shelf = document.createElementNS("http://www.w3.org/2000/svg", "g");     
+		g_shelf.setAttributeNS(null, "class", "shelf");
+		newShelf.appendChild(g_shelf);
+
+		var r = document.createElementNS("http://www.w3.org/2000/svg", "rect");     
+		r.setAttributeNS(null, "x", "0");
+		r.setAttributeNS(null, "y", "292");
+		r.setAttributeNS(null, "width", "100%");
+		r.setAttributeNS(null, "height", "18");	
+		g_shelf.appendChild(r);
+	
+		var books_id = "books_" + id;
+		var g_books = document.createElementNS("http://www.w3.org/2000/svg", "g");     
+		g_books.setAttributeNS(null, "id", books_id);
+		newShelf.appendChild(g_books);
+	
+		return 1;
+	};
+	// End DOM method /makeShelf/ 
+
+	// Begin DOM method /fillShelf/ 
+	function fillShelf(data, i, shelfCount, cuml_length /*, test [boolean]*/){
+  
+	  /*
+	  if (test) {
+		var currentShelf = {}; // Data structure to record details on the fly
+	  }
+	  */
+  
+	  shelfCount += makeShelf(i /*, targetDivId*/);
+
+	  var shelf       = document.getElementById("books_" + i),
+		  shelfHeight = 310 - 19, 
+		  svg_x       = 7,
+		  width, height, svg_y, nextBook, size, g, title;
+
+	  // loop over data file
+	  while (i <= data.length-1) {
+		width  = Number(data[i][1]);
+		height = Number(data[i][2]);
+		svg_y  = shelfHeight - height;
+		width > 32 ? size = "thick" : size = "thin";
+		height > 220 ? size += " tall" : size += " short";       
+
+		// Creata a <g> element to hold each book and tooltip
+		g = document.createElementNS("http://www.w3.org/2000/svg", "g");     
+		shelf.appendChild(g);
+	
+		// Build <rect> element to draw book
+		nextBook = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+		nextBook.setAttributeNS(null, "x", svg_x);
+		nextBook.setAttributeNS(null, "y", svg_y);
+		nextBook.setAttributeNS(null, "width", width);
+		nextBook.setAttributeNS(null, "height", height);
+		nextBook.setAttributeNS(null, "class", size);    
+		g.appendChild(nextBook);
+
+		// Add a tooltip to hold data as text
+	// TODO: we can loop over the header row here and generate arbitrary labels based on CSV
+		title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+		title.innerHTML = "ID: " + data[i][0] + "\nWidth: " + width + "\nHeight: " + height;
+		g.appendChild(title);
+	
+		// Update x position for next book
+		svg_x = svg_x + width + 1;
+	
+		// If no more data, return
+		if (i == data.length-1) {
+			var header = document.getElementById("header");
+			return header.innerHTML = shelfCount 
+									+ " shelves | " 
+									+ (cuml_length/1000).toFixed(2) 
+									+ "m total run";
+		};
+
+		i++;
+	
+		// End current loop if the shelf is full
+		if (svg_x + (data[i][1]*1) > 993) {
+		  cuml_length += svg_x;
+		  break;
+		}; 
+
+	  }
+		// Create and fill further shelf if there's still more data
+	  if (i < data.length) {
+		return fillShelf(data, i, shelfCount, cuml_length);
+	  } 
+
+	};
+	// End DOM method /fillShelf/ 
+	
 	//----------------END DOM METHODS---------------------------------
 
 	//----------------BEGIN EVENT HANDLERS----------------------------
 	onClickToggle = function ( event ) {
 		toggleTest (stateMap.is_live_open);
+		return false;
+	};
+	
+	onClickRender = function ( event ) {
+		var data = bsv.slider.getData();
+		fillShelf(data, 1, 0, 0);
 		return false;
 	};
 			
@@ -88,10 +197,15 @@ bsv.shelves = (function() {
 		setJqueryMap();
 				
 		// initialise buttons and bind click handlers
-		jqueryMap.$btn
+		jqueryMap.$btn1
 			.text('Test')
 			.attr('title', 'Click to switch to test suite')
 			.click( onClickToggle );
+		
+		jqueryMap.$btn4
+			.text('Render')
+			.attr('title', 'Click to render shelves with current dataset')
+			.click( onClickRender );
 
 	};
 	// End Public method /initModule/
