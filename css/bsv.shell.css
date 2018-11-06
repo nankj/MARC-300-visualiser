@@ -36,12 +36,21 @@
 	left:	172px;
 }
 
+#btn4 {
+	left:	256px;
+	background: dodgerblue;
+}
+	#btn4:hover {
+		background: steelblue;
+		cursor:		pointer;
+	}
+
 .bsv-shell-main {
 	top:	40px;
 	left:	0;
 	bottom:	40px;
 	right: 	0;
-	background: red;
+	background: wheat;
 }
 
 .bsv-shell-slider {
