@@ -185,7 +185,7 @@ bsv.shelves = (function() {
 	
 	onClickRender = function ( event ) {
 		if (stateMap.shelves_rendered === false) {
-			var data = bsv.slider.getData();
+			var data = bsv.data.getData();
 			fillShelf(data, 1, 0, 0);
 			jqueryMap.$btn4
 				.text('Clear')

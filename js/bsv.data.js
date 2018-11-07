@@ -1,61 +1,64 @@
 /*
- * bsv.slider.js
+ * bsv.data.js
  * Feature module, slider to set parameters
  */
  
  /* global variables: $, bsv */
+ 
+ 
+ //**********TODO rename slider > data throughout!
 
-bsv.slider = (function() {
+bsv.data = (function() {
 	//----------------BEGIN MODULE SCOPE VARIABLES---------------------
 	var 
 		configMap = {
 			main_html : String()
-			+	'<div class="bsv-slider-close">\<</div>'
+			+	'<div class="bsv-data-close">\<</div>'
 			+	'<hr>'
-			+	'<div class="bsv-slider-params">'
+			+	'<div class="bsv-data-params">'
 				+	'<fieldset>'	
 				+		'<legend>Set parameters</legend>'
-//				+		'<form id="slider-params-form">'
+//				+		'<form id="data-params-form">'
 				+			'<div>'
-				+				'<label for="bsv-slider-params-ppmm">Pages/mm:</label>'
-				+				'<input type="text" id="bsv-slider-params-ppmm" value="14"/>'
+				+				'<label for="bsv-data-params-ppmm">Pages/mm:</label>'
+				+				'<input type="text" id="bsv-data-params-ppmm" value="14"/>'
 				+			'</div>'
 				+			'<div>'
-				+				'<label for="bsv-slider-params-marcCol">MARC 300 col:</label>'
-				+				'<input type="text" id="bsv-slider-params-marcCol" value="2"/>'
+				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
+				+				'<input type="text" id="bsv-data-params-marcCol" value="2"/>'
 				+			'</div>'			
 				+			'<div>'
-				+				'<label for="bsv-slider-params-clothpb">Cloth ratio:</label>'
-				+				'<input type="text" id="bsv-slider-params-clothpb"/>'
+				+				'<label for="bsv-data-params-clothpb">Cloth ratio:</label>'
+				+				'<input type="text" id="bsv-data-params-clothpb"/>'
 				+			'</div>'
 				+			'<div>'
-				+				'<label for="bsv-slider-params-enter"></label>'
-				+				'<button id="bsv-slider-params-enter" class="button">Enter</button>'
+				+				'<label for="bsv-data-params-enter"></label>'
+				+				'<button id="bsv-data-params-enter" class="button">Enter</button>'
 				+			'</div>'
 //				+		'</form>'
 				+	'</fieldset>'
 			+	'</div>'
 			+	'<div>'
-			+		'<fieldset class="bsv-slider-data">'	
+			+		'<fieldset class="bsv-data-data">'	
 			+			'<legend>Choose data source</legend>'
 //			+			'<form>'
 			+				'<div>'
-			+					'<label for="bsv-slider-data-csv">Import CSV file</label><br>'
-			+					'<input type="file" name="File upload" id="bsv-slider-data-csv" accept=".csv"/>'
+			+					'<label for="bsv-data-data-csv">Import CSV file</label><br>'
+			+					'<input type="file" name="File upload" id="bsv-data-data-csv" accept=".csv"/>'
 			+				'</div>'
 			+				'<div>'
-			+					'<label for="bsv-slider-data-enter">Example data</label>'
-			+					'<button id="bsv-slider-data-enter" class="button">Use</button>'
+			+					'<label for="bsv-data-data-enter">Example data</label>'
+			+					'<button id="bsv-data-data-enter" class="button">Use</button>'
 			+				'</div>'		
 //			+			'</form>'
 			+		'</fieldset>'
 			+	'</div>',
-			slider_extend_time		:	600,
-			slider_retract_time		:	600,
-			slider_extend_width		:	0,
-			slider_retract_width	:	-415,
-			slider_out_title		:	'Click to close',
-			slider_in_title			:	'Click to change parameters',
+			dataSlider_extend_time		:	600,
+			dataSlider_retract_time		:	600,
+			dataSlider_extend_width		:	0,
+			dataSlider_retract_width	:	-415,
+			dataSlider_out_title		:	'Click to close',
+			dataSlider_in_title			:	'Click to change parameters',
 			exampleData	:	   [['ID','Width(mm)','Height'],
 								["i10111111",23,190],
 								["i10111112",26,220],
@@ -105,13 +108,13 @@ bsv.slider = (function() {
 		},
 		stateMap  = { 
 			$container 		: null,
-			is_slider_in	: true,
+			is_dataSlider_in	: true,
 		},
 		paramMap  = {},
 		bookData  = [],
 		jqueryMap =	{},
 		
-		setJqueryMap, toggleSlider, setParamMap, initModule,
+		setJqueryMap, toggleDataSlider, setParamMap, initModule,
 		browserSupportFileUpload, uploadCSV, getData, getParams,
 		onChangeUploadCSV, onClickParamBtn, onClickSlide, onClickExampleData;
 	//----------------END MODULE SCOPE VARIABLES----------------------
@@ -164,20 +167,20 @@ bsv.slider = (function() {
 	setJqueryMap = function () {
 		var $container = stateMap.$container;
 		jqueryMap = { 
-			$slider		: 	$container,
-			$closer		:	$container.find( '.bsv-slider-close'),
-			$params		: 	$container.find( '.bsv-slider-params'),
-			$ppmm		:	$container.find( '#bsv-slider-params-ppmm'),
-			$marcCol	:	$container.find( '#bsv-slider-params-marcCol'),
-			$clothpb	:	$container.find( '#bsv-slider-params-clothpb'),
-			$parambtn	:	$container.find( '#bsv-slider-params-enter'),
-			$datacsv	:	$container.find( '#bsv-slider-data-csv'),
-			$dataenter	:	$container.find( '#bsv-slider-data-enter'),
+			$data		: 	$container,
+			$closer		:	$container.find( '.bsv-data-close'),
+			$params		: 	$container.find( '.bsv-data-params'),
+			$ppmm		:	$container.find( '#bsv-data-params-ppmm'),
+			$marcCol	:	$container.find( '#bsv-data-params-marcCol'),
+			$clothpb	:	$container.find( '#bsv-data-params-clothpb'),
+			$parambtn	:	$container.find( '#bsv-data-params-enter'),
+			$datacsv	:	$container.find( '#bsv-data-data-csv'),
+			$dataenter	:	$container.find( '#bsv-data-data-enter'),
 		};
 	};
 	// End DOM method /setJqueryMap/	
 
-	// Begin DOM method / toggleSlider /
+	// Begin DOM method / toggleDataSlider /
 	// Purpose:		Opens and closes right-hand slider
 	// Arguments: 	
 	//		* do-extend  - if true, extends; if false, retracts slider
@@ -185,38 +188,38 @@ bsv.slider = (function() {
 	// Returns:	
 	//		* true
 	
-	toggleSlider = function ( do_extend, callback ) {
+	toggleDataSlider = function ( do_extend, callback ) {
 	
 		if ( do_extend ) {
-			jqueryMap.$slider.animate (
-				{right : configMap.slider_extend_width},
-				configMap.slider_extend_time,
+			jqueryMap.$data.animate (
+				{right : configMap.dataSlider_extend_width},
+				configMap.dataSlider_extend_time,
 				function () {
 					jqueryMap.$closer
-					.attr('title', configMap.slider_out_title)
+					.attr('title', configMap.dataSlider_out_title)
 					.text('X');
-					stateMap.is_slider_in = false;
-					if (callback) {callback (jqueryMap.$slider);}
+					stateMap.is_dataSlider_in = false;
+					if (callback) {callback (jqueryMap.$data);}
 				}
 			);
 			return true;
 		}
 			
-		jqueryMap.$slider.animate (
-			{right : configMap.slider_retract_width},
-			configMap.slider_retract_time,
+		jqueryMap.$data.animate (
+			{right : configMap.dataSlider_retract_width},
+			configMap.dataSlider_retract_time,
 			function () {
 				jqueryMap.$closer
-					.attr('title', configMap.slider_in_title)
+					.attr('title', configMap.dataSlider_in_title)
 					.text('<');
-				stateMap.is_slider_in = true;
-				if (callback) {callback (jqueryMap.$slider);}
+				stateMap.is_dataSlider_in = true;
+				if (callback) {callback (jqueryMap.$data);}
 			}
 		);
 		return true;		
 	};
 	
-	// End DOM method / toggleSlider /
+	// End DOM method / toggleDataSlider /
 
 	// Begin DOM method / setParamMap /
 	// Purpose:		records updated parameters in stateMap
@@ -236,7 +239,7 @@ bsv.slider = (function() {
 
 	//----------------BEGIN EVENT HANDLERS----------------------------
 	onClickSlide = function (event) {
-		toggleSlider(stateMap.is_slider_in);
+		toggleDataSlider(stateMap.is_dataSlider_in);
 		return false;
 	};
 	
@@ -270,7 +273,7 @@ bsv.slider = (function() {
 		setParamMap();
 		// Initialise slider and bind event handlers
 		jqueryMap.$closer
-			.attr('title', configMap.slider_in_title)
+			.attr('title', configMap.dataSlider_in_title)
 			.click( onClickSlide );
 			
 		jqueryMap.$parambtn

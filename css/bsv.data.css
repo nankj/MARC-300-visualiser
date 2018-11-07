@@ -1,38 +1,38 @@
 /*
- * bsv.slider.css
+ * bsv.data.css
  * Slider styles
  */
  
-.bsv-slider-close,
-.bsv-slider-params,
-.bsv-slider-data {
+.bsv-data-close,
+.bsv-data-params,
+.bsv-data-data {
  	position: absolute;
  	font-size:	24px;
  }
 
-.bsv-slider-close {
+.bsv-data-close {
 	margin: 20px 0 0 45px;
 	left: -25px;
 	padding:	4px 6px 1px 6px;	
 /*	border-radius: 5px;*/
 	border-radius: 50% 0 0 50%;
 }
-	.bsv-slider-close:hover {
+	.bsv-data-close:hover {
 		background: darkred;
 		cursor:		pointer;
 		color:		white;
 	}
 
-.bsv-slider-params, .bsv-slider-data {
+.bsv-data-params, .bsv-data-data {
 	left: 		35px;
 	right:		20px;
 }
 
-.bsv-slider-params { 
+.bsv-data-params { 
 	top:	70px;
 }
 
-.bsv-slider-data { 
+.bsv-data-data { 
 	top:	410px;
 }
 
@@ -66,7 +66,7 @@ label {
     background:	darkgray;
 }
 
-#bsv-slider-data-csv {
+#bsv-data-data-csv {
 	margin:	0 0 15px 15px;
 	width:	83.5%;
 }

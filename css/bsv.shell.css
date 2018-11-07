@@ -4,7 +4,7 @@
  */
  
  .bsv-shell-head,  .bsv-shell-head-btn, .bsv-shell-main, 
- .bsv-shell-slider, .bsv-shell-foot {
+ .bsv-shell-data, .bsv-shell-foot {
  	position: absolute;
  }
 
@@ -53,7 +53,7 @@
 	background: wheat;
 }
 
-.bsv-shell-slider {
+.bsv-shell-data {
 	top:	40px;
 	width: 450px;
 	bottom:	40px;

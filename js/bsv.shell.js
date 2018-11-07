@@ -18,7 +18,7 @@ bsv.shell = (function() {
 			+	'</div>'
 			+	'<div class="bsv-shell-main">'	
 			+	'</div>'
-			+	'<div class="bsv-shell-slider"></div>'
+			+	'<div class="bsv-shell-data"></div>'
 			+	'<div class="bsv-shell-foot"></div>'			
 		},
 		stateMap  = { 
@@ -39,7 +39,7 @@ bsv.shell = (function() {
 		var $container = stateMap.$container;
 		jqueryMap = { 
 			$container 	: $container,
-			$slider		: $container.find( '.bsv-shell-slider'),
+			$data		: $container.find( '.bsv-shell-data'),
 			$main		: $container.find( '.bsv-shell-main'),
 			$test		: $container.find( '.bsv-shell-main-test'),
 			$live		: $container.find( '.bsv-shell-main-live'), 
@@ -54,12 +54,12 @@ bsv.shell = (function() {
 	//----------------BEGIN EVENT HANDLERS----------------------------
 	
 	onClickParams = function ( event ) {
-		console.log( bsv.slider.getParams('ppmm') );
+		console.log( bsv.data.getParams('ppmm') );
 		return false;
 	};
 	
 	onClickLogData = function ( event ) {
-		console.table( bsv.slider.getData() );
+		console.table( bsv.data.getData() );
 		return false;
 	};		
 	//----------------END EVENT HANDLERS------------------------------
@@ -87,8 +87,8 @@ bsv.shell = (function() {
 		// set view to live tool
 		jqueryMap.$test
 			.addClass('bsv-x-clearfloat');
-		// initialise slider and shelves modules
-		bsv.slider.initModule(jqueryMap.$slider);
+		// initialise data and shelves modules
+		bsv.data.initModule(jqueryMap.$data);
 		bsv.shelves.initModule(jqueryMap.$main);
 
 
