@@ -26,7 +26,7 @@ bsv.shell = (function() {
 		},
 		jqueryMap =	{},
 		
-		setJqueryMap, toggleTest, onClickToggle, toggleSlider, initModule,
+		setJqueryMap, toggleTest, onClickToggle, initModule,
 		onClickParams, onClickLogData ;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	

@@ -18,11 +18,11 @@ bsv.slider = (function() {
 //				+		'<form id="slider-params-form">'
 				+			'<div>'
 				+				'<label for="bsv-slider-params-ppmm">Pages/mm:</label>'
-				+				'<input type="text" id="bsv-slider-params-ppmm"/>'
+				+				'<input type="text" id="bsv-slider-params-ppmm" value="14"/>'
 				+			'</div>'
 				+			'<div>'
-				+				'<label for="bsv-slider-params-yearrange">Year range:</label>'
-				+				'<input type="text" id="bsv-slider-params-yearrange"/>'
+				+				'<label for="bsv-slider-params-marcCol">MARC 300 col:</label>'
+				+				'<input type="text" id="bsv-slider-params-marcCol" value="2"/>'
 				+			'</div>'			
 				+			'<div>'
 				+				'<label for="bsv-slider-params-clothpb">Cloth ratio:</label>'
@@ -168,7 +168,7 @@ bsv.slider = (function() {
 			$closer		:	$container.find( '.bsv-slider-close'),
 			$params		: 	$container.find( '.bsv-slider-params'),
 			$ppmm		:	$container.find( '#bsv-slider-params-ppmm'),
-			$year		:	$container.find( '#bsv-slider-params-yearrange'),
+			$marcCol	:	$container.find( '#bsv-slider-params-marcCol'),
 			$clothpb	:	$container.find( '#bsv-slider-params-clothpb'),
 			$parambtn	:	$container.find( '#bsv-slider-params-enter'),
 			$datacsv	:	$container.find( '#bsv-slider-data-csv'),
@@ -225,10 +225,10 @@ bsv.slider = (function() {
 	setParamMap = function () {
 		paramMap = {
  			ppmm	:	jqueryMap.$ppmm.val(),
-			year	:	jqueryMap.$year.val(),
+			marcCol	:	jqueryMap.$marcCol.val(),
 			clothpb	:	jqueryMap.$clothpb.val(),		
 		};
-	console.log(paramMap.ppmm*2);
+	console.log(paramMap.ppmm + " " + paramMap.marcCol + " " + paramMap.clothpb);
 	};
 	// End DOM method / setParamMap /
 
@@ -261,10 +261,13 @@ bsv.slider = (function() {
 	//----------------BEGIN PUBLIC METHODS----------------------------
 	// Begin Public method /initModule/
 	initModule = function ( $container ) {
-		// load HTML and map jQuery collections
+		// Load HTML and map jQuery collections
 		stateMap.$container = $container;
 		$container.html( configMap.main_html );
 		setJqueryMap();
+		// Load up example dataset
+		setExampleData();
+		setParamMap();
 		// Initialise slider and bind event handlers
 		jqueryMap.$closer
 			.attr('title', configMap.slider_in_title)

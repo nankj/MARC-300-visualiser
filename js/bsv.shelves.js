@@ -20,7 +20,8 @@ bsv.shelves = (function() {
 		},
 		stateMap  = { 
 			$container 		: null,
-			is_live_open	: true,			
+			is_live_open	: false,
+			shelves_rendered: false,
 		},
 		jqueryMap =	{},
 		
@@ -65,11 +66,11 @@ bsv.shelves = (function() {
 			stateMap.is_live_open = false;
 			return true;
 		} 
-	jqueryMap.$live.removeClass('bsv-x-clearfloat');
-	jqueryMap.$test.addClass('bsv-x-clearfloat');	
-	jqueryMap.$btn1.text('Test').attr('title', 'Click to switch to test suite');
-	stateMap.is_live_open = true;
-	return true;
+		jqueryMap.$live.removeClass('bsv-x-clearfloat');
+		jqueryMap.$test.addClass('bsv-x-clearfloat');	
+		jqueryMap.$btn1.text('Test').attr('title', 'Click to switch to test suite');
+		stateMap.is_live_open = true;
+		return true;
 	};
 	// End DOM method /toggleTest/ 
 
@@ -149,10 +150,12 @@ bsv.shelves = (function() {
 		// If no more data, return
 		if (i == data.length-1) {
 			var header = document.getElementById("header");
-			return header.innerHTML = shelfCount 
+			return stateMap.shelves_rendered = true;
+/*			return header.innerHTML = shelfCount 
 									+ " shelves | " 
 									+ (cuml_length/1000).toFixed(2) 
 									+ "m total run";
+*/								
 		};
 
 		i++;
@@ -181,9 +184,21 @@ bsv.shelves = (function() {
 	};
 	
 	onClickRender = function ( event ) {
-		var data = bsv.slider.getData();
-		fillShelf(data, 1, 0, 0);
-		return false;
+		if (stateMap.shelves_rendered === false) {
+			var data = bsv.slider.getData();
+			fillShelf(data, 1, 0, 0);
+			jqueryMap.$btn4
+				.text('Clear')
+				.attr('title', 'Click to clear shelves');				
+			return false;
+		} else {
+			jqueryMap.$testw.empty();
+			jqueryMap.$btn4
+				.text('Render')
+				.attr('title', 'Click to render shelves with current dataset');
+			stateMap.shelves_rendered = false;
+			return false;
+		}		
 	};
 			
 	//----------------END EVENT HANDLERS------------------------------
@@ -206,6 +221,8 @@ bsv.shelves = (function() {
 			.text('Render')
 			.attr('title', 'Click to render shelves with current dataset')
 			.click( onClickRender );
+			
+		toggleTest(true);
 
 	};
 	// End Public method /initModule/
