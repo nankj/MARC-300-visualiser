@@ -19,17 +19,22 @@ bsv.shelves = (function() {
 			+	'</div>'			
 		},
 		stateMap  = { 
-			$container 		: null,
-			is_live_open	: false,
-			shelves_rendered: false,
+			$container 			: null,
+			is_live_open		: false,
+			shelves_rendered	: false,
+			shelfCount			: 0,
 		},
 		jqueryMap =	{},
 		
-		setJqueryMap, toggleTest, makeShelf, fillShelf,
+		randomIntFromInterval, setJqueryMap, toggleTest, makeShelf, fillShelf,
 		onClickToggle, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
+	
+	randomIntFromInterval = function(min,max) {
+			return Math.floor(Math.random()*(max-min+1)+min);
+	}
 	//----------------END UTILITY METHODS-----------------------------
 	
 	//----------------BEGIN DOM METHODS-------------------------------
@@ -102,30 +107,30 @@ bsv.shelves = (function() {
 	// End DOM method /makeShelf/ 
 
 	// Begin DOM method /fillShelf/ 
-	function fillShelf(data, i, shelfCount, cuml_length /*, test [boolean]*/){
-  
-	  /*
-	  if (test) {
-		var currentShelf = {}; // Data structure to record details on the fly
-	  }
-	  */
+	function fillShelf(data, i, shelfCount, cuml_length){
   
 	  shelfCount += makeShelf(i /*, targetDivId*/);
 
-	  var shelf       = document.getElementById("books_" + i),
-		  shelfHeight = 310 - 19, 
-		  svg_x       = 7,
-		  width, height, svg_y, nextBook, size, g, title;
+	  var shelf       	= document.getElementById("books_" + i),
+		  shelfHeight 	= bsv.data.getParams("shelfHeight"),
+		  svg_x       	= 7,
+		  headers		= data[0],
+		  colCount		= headers.length-1,
+		  widthCol	 	= bsv.data.getParams("widthCol"),
+		  heightCol		= bsv.data.getParams("heightCol"),
+		  width, height, svg_y, nextBook, size, g, j, title, titleText;
 
 	  // loop over data file
 	  while (i <= data.length-1) {
-		width  = Number(data[i][1]);
-		height = Number(data[i][2]);
+	  	titleText = "";
+//	    width  = Number(data[i][colCount]); // From MARC300
+		width  = Number(data[i][widthCol]); // From width column
+		height = Number(data[i][heightCol])*10;
 		svg_y  = shelfHeight - height;
 		width > 32 ? size = "thick" : size = "thin";
 		height > 220 ? size += " tall" : size += " short";       
 
-		// Creata a <g> element to hold each book and tooltip
+		// Create a <g> element to hold each book and tooltip
 		g = document.createElementNS("http://www.w3.org/2000/svg", "g");     
 		shelf.appendChild(g);
 	
@@ -138,10 +143,12 @@ bsv.shelves = (function() {
 		nextBook.setAttributeNS(null, "class", size);    
 		g.appendChild(nextBook);
 
-		// Add a tooltip to hold data as text
-	// TODO: we can loop over the header row here and generate arbitrary labels based on CSV
+		// Add a tooltip to hold row of data as text (labels from header row)	
+		for (j = 0 ; j < headers.length; j++) {
+			titleText += headers[j] + ": " + data[i][j] + "\n";
+		}
 		title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-		title.innerHTML = "ID: " + data[i][0] + "\nWidth: " + width + "\nHeight: " + height;
+		title.innerHTML = titleText;
 		g.appendChild(title);
 	
 		// Update x position for next book
@@ -149,7 +156,7 @@ bsv.shelves = (function() {
 	
 		// If no more data, return
 		if (i == data.length-1) {
-			var header = document.getElementById("header");
+//			var header = document.getElementById("header");
 			return stateMap.shelves_rendered = true;
 /*			return header.innerHTML = shelfCount 
 									+ " shelves | " 
@@ -161,7 +168,7 @@ bsv.shelves = (function() {
 		i++;
 	
 		// End current loop if the shelf is full
-		if (svg_x + (data[i][1]*1) > 993) {
+		if (svg_x + width > 993) {
 		  cuml_length += svg_x;
 		  break;
 		}; 
