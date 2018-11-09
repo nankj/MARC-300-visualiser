@@ -12,6 +12,7 @@ bsv.shelves = (function() {
 			main_html : String()
 			+	'<div class="bsv-shelves-test">'
 			+		'<div class="bsv-shelves-test-width"></div>'
+			+		'<div class="bsv-shelves-test-info"></div>'			
 			+		'<div class="bsv-shelves-test-MARC" ></div>'
 			+	'</div>'
 			+	'<div class="bsv-shelves-live">'
@@ -26,15 +27,17 @@ bsv.shelves = (function() {
 		},
 		jqueryMap =	{},
 		
-		randomIntFromInterval, setJqueryMap, toggleTest, makeShelf, fillShelf,
+		percentageDifference, setJqueryMap, toggleTest, makeShelf, fillShelf,
 		onClickToggle, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
 	
-	randomIntFromInterval = function(min,max) {
-			return Math.floor(Math.random()*(max-min+1)+min);
+	percentageDifference = function(a,b) {
+			var result = 100*((b-a)/a)
+			return result.toFixed(1) + "%";
 	}
+		
 	//----------------END UTILITY METHODS-----------------------------
 	
 	//----------------BEGIN DOM METHODS-------------------------------
@@ -44,6 +47,7 @@ bsv.shelves = (function() {
 		jqueryMap = { 
 			$shelves 	: $container,
 			$test		: $container.find( '.bsv-shelves-test'),
+			$info		: $container.find( '.bsv-shelves-test-info'),
 			$testw		: $container.find( '.bsv-shelves-test-width'),
 			$live		: $container.find( '.bsv-shelves-live'),
 			$livew		: $container.find( '.bsv-shelves-live-width'),
@@ -118,13 +122,14 @@ bsv.shelves = (function() {
 		  colCount		= headers.length-1,
 		  widthCol	 	= bsv.data.getParams("widthCol"),
 		  heightCol		= bsv.data.getParams("heightCol"),
-		  width, height, svg_y, nextBook, size, g, j, title, titleText;
+		  marcWidth		= 0,
+		  width, height, svg_y, nextBook, size, 
+		  g, j, title, titleText;
 
 	  // loop over data file
 	  while (i <= data.length-1) {
 	  	titleText = "";
-//	    width  = Number(data[i][colCount]); // From MARC300
-		width  = Number(data[i][widthCol]); // From width column
+		width  = Number(data[i][widthCol]);
 		height = Number(data[i][heightCol])*10;
 		svg_y  = shelfHeight - height;
 		width > 32 ? size = "thick" : size = "thin";
@@ -151,12 +156,18 @@ bsv.shelves = (function() {
 		title.innerHTML = titleText;
 		g.appendChild(title);
 	
-		// Update x position for next book
+		// Update x position for next book, with 1mm space between
 		svg_x = svg_x + width + 1;
+		// Increment figure modelled from MARC 300 
+	    marcWidth  += Number(data[i][colCount])+1; 
 	
 		// If no more data, return
 		if (i == data.length-1) {
-//			var header = document.getElementById("header");
+		
+			console.log(percentageDifference(svg_x - 7,marcWidth));
+			console.log("marcWidth: " 					+ marcWidth 
+						+ "\nsvg_x: "					+ (svg_x - 7) 
+						+ "\nTotal length difference: " + cuml_length);
 			return stateMap.shelves_rendered = true;
 /*			return header.innerHTML = shelfCount 
 									+ " shelves | " 
@@ -169,7 +180,9 @@ bsv.shelves = (function() {
 	
 		// End current loop if the shelf is full
 		if (svg_x + width > 993) {
-		  cuml_length += svg_x;
+		  cuml_length += marcWidth - svg_x;
+			console.log(percentageDifference(svg_x - 7,marcWidth));
+			console.log("marcWidth: " + marcWidth + "\nsvg_x: " + (svg_x - 7));
 		  break;
 		}; 
 

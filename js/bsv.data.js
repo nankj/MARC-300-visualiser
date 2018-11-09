@@ -19,7 +19,7 @@ bsv.data = (function() {
 //				+		'<form id="data-params-form">'
 				+			'<div>'
 				+				'<label for="bsv-data-params-ppmm">Pages/mm:</label>'
-				+				'<input type="text" id="bsv-data-params-ppmm" value="14"/>'
+				+				'<input type="text" id="bsv-data-params-ppmm" value="10.67"/>'
 				+			'</div>'
 				+			'<div>'
 				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
@@ -218,6 +218,8 @@ bsv.data = (function() {
 	marc300ToWidth = function(array, col) {
 		var regexRoman			= /[mdlcxvi]{1,6}(?= |,|-|p)/g,
 			regexNumberRange	= /([\d]{1,4})-([\d]{1,4})/g,
+			regexBadHyphens		= / ?(?:\-)(?: )?/g,
+			regexClearBrackets	= /[\[\] ]/g,
 			totalCols 			= array[0].length-1,
 			firstTime, i;
 		
@@ -227,14 +229,14 @@ bsv.data = (function() {
 		for (i = 0 ; i < array.length ; i++){
 			if (!firstTime) {array[i].pop()};
 			if (array[i][col] === "") {array[i][col] = configMap.average_page_count};
-			// *1* Convert roman to integer and remove brackets
+			// *1* Convert roman to integer, fix hyphens and brackets, handle ranges
 			var result = array[i][col].replace(regexRoman, convertRoman)
-									  .replace(/[\[\] ]/g, "");
-			// *2* deal with number ranges
-			result = result.replace(regexNumberRange, numberRange);    
-			// *3* sum all integers
+									  .replace(regexBadHyphens,"-")
+									  .replace(regexClearBrackets, ",")
+									  .replace(regexNumberRange, numberRange);
+			// *2* sum all integers
 			result = sumIntegers(result);
-			// *5* convert page number to width
+			// *3* convert page number to width
 			result = result / Number(paramMap.ppmm);
 			// *4* add resulting width to end of row
 			array[i].push(result);
