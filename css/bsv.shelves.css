@@ -60,18 +60,30 @@
   fill: steelblue;
   fill-opacity: 0.4;
 }
+	.thin.tall:hover {
+		fill-opacity: 0.8;
+	}
 
 .thick.tall{
   fill: dodgerblue;
   fill-opacity: 0.6;
 }
+	.thick.tall:hover {
+		fill-opacity: 0.8;
+	}
 
 .thin.short {
   fill: #4CAF50;
   fill-opacity: 0.4;
 }
+	.thin.short:hover{
+		fill-opacity: 0.8;
+	}
 
 .thick.short {
   fill: #009688;
   fill-opacity: 0.4;
 }
+	.thick.short:hover{
+		fill-opacity: 0.8;
+	}

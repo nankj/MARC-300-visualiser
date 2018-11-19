@@ -21,7 +21,9 @@
 	left: 	4px; /*0.3vw;*/
 	height: 32px;
 	width: 	80px;
+	color:	white;
 	background: orange;
+	transition: background 1s;
 }
 	.bsv-shell-head-btn:hover {
 		background: darkorange;

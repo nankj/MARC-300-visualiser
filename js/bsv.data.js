@@ -24,7 +24,15 @@ bsv.data = (function() {
 				+			'<div>'
 				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
 				+				'<input type="text" id="bsv-data-params-marcCol" value="3"/>'
-				+			'</div>'			
+				+			'</div>'	
+				+			'<div>'
+				+				'<label for="bsv-data-params-widthCol">Width col:</label>'
+				+				'<input type="text" id="bsv-data-params-widthCol" value="6"/>'
+				+			'</div>'
+				+			'<div>'
+				+				'<label for="bsv-data-params-heightCol">Height col:</label>'
+				+				'<input type="text" id="bsv-data-params-heightCol" value="7"/>'
+				+			'</div>'
 				+			'<div>'
 				+				'<label for="bsv-data-params-clothpb">Cloth ratio:</label>'
 				+				'<input type="text" id="bsv-data-params-clothpb"/>'
@@ -259,6 +267,8 @@ bsv.data = (function() {
 			$params		: 	$container.find( '.bsv-data-params'),
 			$ppmm		:	$container.find( '#bsv-data-params-ppmm'),
 			$marcCol	:	$container.find( '#bsv-data-params-marcCol'),
+			$widthCol	:	$container.find( '#bsv-data-params-widthCol'),
+			$heightCol	:	$container.find( '#bsv-data-params-heightCol'),
 			$clothpb	:	$container.find( '#bsv-data-params-clothpb'),
 			$parambtn	:	$container.find( '#bsv-data-params-enter'),
 			$datacsv	:	$container.find( '#bsv-data-data-csv'),
@@ -309,7 +319,8 @@ bsv.data = (function() {
 	// End DOM method / toggleDataSlider /
 
 	// Begin DOM method / setParamMap /
-	// Purpose:		records updated parameters in stateMap
+	// Purpose:		Records updated parameters in stateMap
+	// 				and applies them to data 
 	// Arguments: 	none
 	// Returns:		nothing
 	setParamMap = function () {
@@ -317,11 +328,11 @@ bsv.data = (function() {
  			ppmm		:	jqueryMap.$ppmm.val(),
 			marcCol		:	jqueryMap.$marcCol.val(),
 			clothpb		:	jqueryMap.$clothpb.val(),
-			widthCol	:	6,
-			heightCol	:	7,
+			widthCol	:	jqueryMap.$widthCol.val(),
+			heightCol	:	jqueryMap.$heightCol.val(),
 			shelfHeight :	291 		
 		};
-	bookData = marc300ToWidth(bookData, paramMap.marcCol);
+		bookData = marc300ToWidth(bookData, paramMap.marcCol);
 	};
 	// End DOM method / setParamMap /
 
@@ -339,12 +350,19 @@ bsv.data = (function() {
 	};
 	
 	onChangeUploadCSV = function (event) {
+		setParamMap();
 		uploadCSV(event);
+		jqueryMap.$dataenter.text("Use");		
 		return false;
 	};
 	
 	onClickExampleData = function (event) {
 		setExampleData();
+		paramMap.marcCol 	= 3;
+		paramMap.widthCol	= 6;
+		paramMap.heightCol	= 7;
+		jqueryMap.$datacsv.val("");
+		jqueryMap.$dataenter.text("Loaded");
 		return false;
 	};
 	
@@ -374,7 +392,6 @@ bsv.data = (function() {
 			
 		jqueryMap.$dataenter
 			.click( onClickExampleData );
-
 
 	};
 	// End Public method /initModule/

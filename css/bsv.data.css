@@ -7,7 +7,7 @@
 .bsv-data-params,
 .bsv-data-data {
  	position: absolute;
- 	font-size:	24px;
+ 	font-size:	20px;
  }
 
 .bsv-data-close {
@@ -33,7 +33,7 @@
 }
 
 .bsv-data-data { 
-	top:	410px;
+	top:	490px;
 }
 
 
