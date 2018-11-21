@@ -17,8 +17,27 @@ bsv.shelves = (function() {
 			+	'</div>'
 			+	'<div class="bsv-shelves-live">'
 			+		'<div class="bsv-shelves-live-width"></div>'
-			+	'</div>'			
+			+	'</div>',
+			
+			shelfParams : {
+				x 			: 0,
+				y			: 0,
+				startX		: 7,
+				totalWidth	: 1000,
+				thickness	: 18,
+				bookSpace	: 292,
+				viewBox			: function (){
+					var viewBox = 		this.x 
+								+ " " + this.y 
+								+ " " + this.totalWidth 
+								+ " " + (this.thickness + this.bookSpace);
+					var result = {viewBox : viewBox};
+					return result;
+				}
+			}
+						
 		},
+		
 		stateMap  = { 
 			$container 			: null,
 			is_live_open		: false,
@@ -27,8 +46,8 @@ bsv.shelves = (function() {
 		},
 		jqueryMap =	{},
 		
-		percentageDifference, setJqueryMap, toggleTest, makeShelf, fillShelf,
-		onClickToggle, initModule;
+		percentageDifference, setJqueryMap, toggleTest, makeShelf,
+		makeBook, makeSVG, fillBay, onClickToggle, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -84,116 +103,170 @@ bsv.shelves = (function() {
 	// End DOM method /toggleTest/ 
 
 	// Begin DOM method /makeShelf/ 
-	function makeShelf(id){
-		var newShelf = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		var div = jqueryMap.$testw;
-		newShelf.setAttributeNS(null, "viewBox", "0 0 1000 310");
+	makeShelf = function (id, div){
+		var newShelf = makeSVG("svg", configMap.shelfParams.viewBox());
 		div.append(newShelf);
 
-		var g_shelf = document.createElementNS("http://www.w3.org/2000/svg", "g");     
-		g_shelf.setAttributeNS(null, "class", "shelf");
+		var g_shelf = makeSVG("g", {"class": "shelf"});     
 		newShelf.appendChild(g_shelf);
 
-		var r = document.createElementNS("http://www.w3.org/2000/svg", "rect");     
-		r.setAttributeNS(null, "x", "0");
-		r.setAttributeNS(null, "y", "292");
-		r.setAttributeNS(null, "width", "100%");
-		r.setAttributeNS(null, "height", "18");	
+		var r = makeSVG("rect", {
+					x: 		"0",
+					y: 		configMap.shelfParams.bookSpace,
+					width: 	"100%",
+					height:	configMap.shelfParams.thickness
+				}
+			);     
 		g_shelf.appendChild(r);
 	
 		var books_id = "books_" + id;
-		var g_books = document.createElementNS("http://www.w3.org/2000/svg", "g");     
-		g_books.setAttributeNS(null, "id", books_id);
+		var g_books = makeSVG("g", {id: books_id});     
 		newShelf.appendChild(g_books);
 	
 		return 1;
 	};
 	// End DOM method /makeShelf/ 
+	
+	makeBook = function(dataRow, svg_x, shelf, headerRow){
+	
+		var	titleText 	= "",
+			widthCol	= bsv.data.getParams("widthCol"),
+			heightCol	= bsv.data.getParams("heightCol"),
+			shelfHeight = configMap.shelfParams.bookSpace - 1,
+			bookAttrs = {},
+			g, nextBook, j, toolTip
+			;
 
-	// Begin DOM method /fillShelf/ 
-	function fillShelf(data, i, shelfCount, cuml_length){
-  
-	  shelfCount += makeShelf(i /*, targetDivId*/);
-
-	  var shelf       	= document.getElementById("books_" + i),
-		  shelfHeight 	= bsv.data.getParams("shelfHeight"),
-		  svg_x       	= 7,
-		  headers		= data[0],
-		  colCount		= headers.length-1,
-		  widthCol	 	= bsv.data.getParams("widthCol"),
-		  heightCol		= bsv.data.getParams("heightCol"),
-		  marcWidth		= 0,
-		  width, height, svg_y, nextBook, size, 
-		  g, j, title, titleText;
-
-	  // loop over data file
-	  while (i <= data.length-1) {
-	  	titleText = "";
-		width  = Number(data[i][widthCol]);
-		height = Number(data[i][heightCol])*10;
-		svg_y  = shelfHeight - height;
-		width > 32 ? size = "thick" : size = "thin";
-		height > 220 ? size += " tall" : size += " short";       
+		bookAttrs.width  = Number(dataRow[widthCol]);
+		bookAttrs.height = Number(dataRow[heightCol])*10;
+		bookAttrs.x		 = svg_x;
+		bookAttrs.y		 = shelfHeight - bookAttrs.height;		
+		bookAttrs.width  > 32   ? bookAttrs["class"] =  "thick" : bookAttrs["class"] =  "thin";
+		bookAttrs.height > 220  ? bookAttrs["class"] += " tall" : bookAttrs["class"] += " short";  
 
 		// Create a <g> element to hold each book and tooltip
-		g = document.createElementNS("http://www.w3.org/2000/svg", "g");     
+		g = makeSVG("g");     
 		shelf.appendChild(g);
-	
-		// Build <rect> element to draw book
-		nextBook = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		nextBook.setAttributeNS(null, "x", svg_x);
-		nextBook.setAttributeNS(null, "y", svg_y);
-		nextBook.setAttributeNS(null, "width", width);
-		nextBook.setAttributeNS(null, "height", height);
-		nextBook.setAttributeNS(null, "class", size);    
+
+		// Create a <rect> element to draw book
+		nextBook = makeSVG("rect", bookAttrs);
+
 		g.appendChild(nextBook);
 
 		// Add a tooltip to hold row of data as text (labels from header row)	
-		for (j = 0 ; j < headers.length; j++) {
-			titleText += headers[j] + ": " + data[i][j] + "\n";
+		for (j = 0 ; j < headerRow.length; j++) {
+			titleText += headerRow[j] + ": " + dataRow[j] + "\n";
 		}
-		title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-		title.innerHTML = titleText;
-		g.appendChild(title);
+		toolTip = makeSVG("title");
+		toolTip.innerHTML = titleText;
+		g.appendChild(toolTip);
+
+		return bookAttrs.width;
+	};
 	
+	
+	makeSVG = function(type, attrs){
+		var result = document.createElementNS("http://www.w3.org/2000/svg", type);
+		if (attrs) {
+			for (var key in attrs) {
+				if (attrs.hasOwnProperty(key)) {
+					result.setAttributeNS(null, key, attrs[key]);
+				}
+			}
+		}
+		return result;
+	};
+	
+
+	// Begin DOM method /fillBay/ 
+	fillBay = function (data, i, shelfCount, cuml_length){
+	  	var svg_x       = configMap.shelfParams.startX,
+			start_x     = configMap.shelfParams.startX,		  
+			headers		= data[0],
+			colCount	= headers.length-1,
+			marcWidth	= 0,
+			width, shelf;
+		  
+		shelfCount += makeShelf(i, jqueryMap.$testw);
+		shelf = document.getElementById("books_" + i);
+
+	  // loop over data file
+	  while (i <= data.length-1) {
+	  	width = makeBook(data[i], svg_x, shelf, headers);
+	  		
 		// Update x position for next book, with 1mm space between
-		svg_x = svg_x + width + 1;
+		svg_x = svg_x + width + 1; 
+		
 		// Increment figure modelled from MARC 300 
 	    marcWidth  += Number(data[i][colCount])+1; 
 	
 		// If no more data, return
 		if (i == data.length-1) {
-		
-			console.log(percentageDifference(svg_x - 7,marcWidth));
-			console.log("marcWidth: " 					+ marcWidth 
-						+ "\nsvg_x: "					+ (svg_x - 7) 
-						+ "\nTotal length difference: " + cuml_length);
-			return stateMap.shelves_rendered = true;
-/*			return header.innerHTML = shelfCount 
-									+ " shelves | " 
-									+ (cuml_length/1000).toFixed(2) 
-									+ "m total run";
-*/								
+		  	cuml_length += marcWidth - svg_x;		
+			console.log(percentageDifference(svg_x - start_x,marcWidth));
+			console.log("MARC width: " 			+ marcWidth.toFixed(1) 
+						+ "\nActual width: "	+ ((svg_x - start_x).toFixed(1)) 
+						+ "\nDifference: " 		+ cuml_length.toFixed(1));
+			return stateMap.shelves_rendered = true;						
 		};
 
 		i++;
 	
 		// End current loop if the shelf is full
-		if (svg_x + width > 993) {
+		if (svg_x + width > (configMap.shelfParams.totalWidth - start_x)) {
 		  cuml_length += marcWidth - svg_x;
-			console.log(percentageDifference(svg_x - 7,marcWidth));
-			console.log("marcWidth: " + marcWidth + "\nsvg_x: " + (svg_x - 7));
+			console.log(percentageDifference(svg_x - start_x, marcWidth));
+			console.log("marcWidth: " + marcWidth + "\nsvg_x: " + (svg_x - start_x));
 		  break;
 		}; 
 
 	  }
 		// Create and fill further shelf if there's still more data
 	  if (i < data.length) {
-		return fillShelf(data, i, shelfCount, cuml_length);
+		return fillBay(data, i, shelfCount, cuml_length);
 	  } 
 
 	};
-	// End DOM method /fillShelf/ 
+	// End DOM method /fillBay/ 
+	
+	// refactor: remove tallies, and see if we can abstract a bit
+	fillBayVersatile = function (data, i, shelfCount, div){
+	  	var svg_x       = configMap.shelfParams.startX,
+			start_x     = configMap.shelfParams.startX,		
+			shelfSpace	= configMap.shelfParams.totalWidth,  
+			headers		= data[0],
+			colCount	= headers.length-1,
+			width, shelf;
+		  
+		shelfCount += makeShelf(i, div);
+		shelf = document.getElementById("books_" + i);
+
+	  // loop over data file
+	  while (i <= data.length-1) {
+	  	width = makeBook(data[i], svg_x, shelf, headers);
+	  		
+		// Update x position for next book, with 1mm space between
+		svg_x = svg_x + width + 1; 
+			
+		// If no more data, return
+		if (i == data.length-1) {
+			return stateMap.shelves_rendered = true;						
+		};
+
+		i++;
+	
+		// End current loop if the shelf is full
+		if (svg_x + width > (shelfSpace - start_x)) {
+		  break;
+		}; 
+
+	  }
+		// Create and fill further shelf if there's still more data
+	  if (i < data.length) {
+		return fillBayVersatile(data, i, shelfCount, div);
+	  } 
+
+	};	
 	
 	//----------------END DOM METHODS---------------------------------
 
@@ -206,7 +279,7 @@ bsv.shelves = (function() {
 	onClickRender = function ( event ) {
 		if (stateMap.shelves_rendered === false) {
 			var data = bsv.data.getData();
-			fillShelf(data, 1, 0, 0);
+			fillBayVersatile(data, 1, 0, jqueryMap.$testw);
 			jqueryMap.$btn4
 				.text('Clear')
 				.attr('title', 'Click to clear shelves');				

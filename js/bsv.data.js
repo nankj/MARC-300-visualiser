@@ -12,7 +12,6 @@ bsv.data = (function() {
 		configMap = {
 			main_html : String()
 			+	'<div class="bsv-data-close">\<</div>'
-			+	'<hr>'
 			+	'<div class="bsv-data-params">'
 				+	'<fieldset>'	
 				+		'<legend>Set parameters</legend>'
@@ -20,18 +19,6 @@ bsv.data = (function() {
 				+			'<div>'
 				+				'<label for="bsv-data-params-ppmm">Pages/mm:</label>'
 				+				'<input type="text" id="bsv-data-params-ppmm" value="10.67"/>'
-				+			'</div>'
-				+			'<div>'
-				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
-				+				'<input type="text" id="bsv-data-params-marcCol" value="3"/>'
-				+			'</div>'	
-				+			'<div>'
-				+				'<label for="bsv-data-params-widthCol">Width col:</label>'
-				+				'<input type="text" id="bsv-data-params-widthCol" value="6"/>'
-				+			'</div>'
-				+			'<div>'
-				+				'<label for="bsv-data-params-heightCol">Height col:</label>'
-				+				'<input type="text" id="bsv-data-params-heightCol" value="7"/>'
 				+			'</div>'
 				+			'<div>'
 				+				'<label for="bsv-data-params-clothpb">Cloth ratio:</label>'
@@ -49,13 +36,30 @@ bsv.data = (function() {
 			+			'<legend>Choose data source</legend>'
 //			+			'<form>'
 			+				'<div>'
-			+					'<label for="bsv-data-data-csv">Import CSV file</label><br>'
-			+					'<input type="file" name="File upload" id="bsv-data-data-csv" accept=".csv"/>'
-			+				'</div>'
-			+				'<div>'
 			+					'<label for="bsv-data-data-enter">Example data</label>'
 			+					'<button id="bsv-data-data-enter" class="button">Use</button>'
 			+				'</div>'		
+			+				'<hr>'
+			+				'<div>'
+			+					'<label for="bsv-data-data-csv">Import CSV file</label><br>'
+			+					'<input type="file" name="File upload" id="bsv-data-data-csv" accept=".csv"/>'
+			+				'</div>'
+				+			'<div>'
+				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
+				+				'<input type="text" id="bsv-data-params-marcCol" value="7"/>'
+				+			'</div>'	
+				+			'<div>'
+				+				'<label for="bsv-data-params-widthCol">Width col:</label>'
+				+				'<input type="text" id="bsv-data-params-widthCol" value="1"/>'
+				+			'</div>'
+				+			'<div>'
+				+				'<label for="bsv-data-params-heightCol">Height col:</label>'
+				+				'<input type="text" id="bsv-data-params-heightCol" value="2"/>'
+				+			'</div>'
+				+			'<div>'
+				+				'<label for="bsv-data-params-shelfCol">Shelf col:</label>'
+				+				'<input type="text" id="bsv-data-params-shelfCol" value=""/>'
+				+			'</div>'				
 //			+			'</form>'
 			+		'</fieldset>'
 			+	'</div>',
@@ -65,10 +69,10 @@ bsv.data = (function() {
 			dataSlider_retract_width	:	-415,
 			dataSlider_out_title		:	'Click to close',
 			dataSlider_in_title			:	'Click to change parameters',
-			average_page_count			:	'214 (est.)',
+			average_page_count			:	'296 (est.)',
 //								0:Barcode,1:Item Number,2:Bib,3:300a,4:260c,5:Title,6:Width,7:Height,8:Binding,9:Shelf ID
 			exampleData	:	   [["Barcode","Item Number","Bib","MARC 300a","MARC 260c","Title","Width","Height","Binding","Shelf ID"],
-								["11046204","i10012199","b1001021x","","","EARLY VATICINATION IN WELSH.","26.9","23","c","2.101A"],
+								["11046204","i10012199","b1001021x","0","","EARLY VATICINATION IN WELSH.","26.9","23","c","2.101A"],
 								["11057420","i10286226","b10253129","","","HELDEN AUF FREIERSFUSSEN.","29.6","27","p","2.101A"],
 								["11068595","i10300934","b10266811","","1982","Cymru yn llenyddiaeth Cymru.","8.1","22","c","2.101A"],
 								["11098378","i10645883","b10561432","xiii,322p ;","1987","A book of Wales : an anthology / selected by Meic Stephens.","31.6","25","c","2.101A"],
@@ -167,7 +171,14 @@ bsv.data = (function() {
 	
 	// Set bookData to example dataset
 	setExampleData = function() {
-		bookData = configMap.exampleData;		
+//		bookData = configMap.exampleData;
+		paramMap.marcCol 	= 3;
+		paramMap.widthCol	= 6;
+		paramMap.heightCol	= 7;
+ 		paramMap.ppmm		=	jqueryMap.$ppmm.val();
+		bookData = marc300ToWidth(configMap.exampleData, paramMap.marcCol);		
+		jqueryMap.$datacsv.val("");
+		jqueryMap.$dataenter.text("Loaded");		
 	};
 	
 	// Handle number ranges in MARC 300
@@ -236,7 +247,7 @@ bsv.data = (function() {
 		
 		for (i = 0 ; i < array.length ; i++){
 			if (!firstTime) {array[i].pop()};
-			if (array[i][col] === "") {array[i][col] = configMap.average_page_count};
+			if (array[i][col] == "0" | array[i][col] === "") {array[i][col] = configMap.average_page_count};
 			// *1* Convert roman to integer, fix hyphens and brackets, handle ranges
 			var result = array[i][col].replace(regexRoman, convertRoman)
 									  .replace(regexBadHyphens,"-")
@@ -269,6 +280,7 @@ bsv.data = (function() {
 			$marcCol	:	$container.find( '#bsv-data-params-marcCol'),
 			$widthCol	:	$container.find( '#bsv-data-params-widthCol'),
 			$heightCol	:	$container.find( '#bsv-data-params-heightCol'),
+			$shelfCol	:	$container.find( '#bsv-data-params-shelfCol'),
 			$clothpb	:	$container.find( '#bsv-data-params-clothpb'),
 			$parambtn	:	$container.find( '#bsv-data-params-enter'),
 			$datacsv	:	$container.find( '#bsv-data-data-csv'),
@@ -320,7 +332,7 @@ bsv.data = (function() {
 
 	// Begin DOM method / setParamMap /
 	// Purpose:		Records updated parameters in stateMap
-	// 				and applies them to data 
+	// 				and applies them to data, if defined 
 	// Arguments: 	none
 	// Returns:		nothing
 	setParamMap = function () {
@@ -330,9 +342,11 @@ bsv.data = (function() {
 			clothpb		:	jqueryMap.$clothpb.val(),
 			widthCol	:	jqueryMap.$widthCol.val(),
 			heightCol	:	jqueryMap.$heightCol.val(),
-			shelfHeight :	291 		
+			shelfCol	:	jqueryMap.$shelfCol.val(),
+//			shelfHeight :	291 		// Move to shelves module
 		};
-		bookData = marc300ToWidth(bookData, paramMap.marcCol);
+		bookData[0] 	? 	bookData = marc300ToWidth(bookData, paramMap.marcCol)
+						:	bookData;	
 	};
 	// End DOM method / setParamMap /
 
@@ -358,11 +372,6 @@ bsv.data = (function() {
 	
 	onClickExampleData = function (event) {
 		setExampleData();
-		paramMap.marcCol 	= 3;
-		paramMap.widthCol	= 6;
-		paramMap.heightCol	= 7;
-		jqueryMap.$datacsv.val("");
-		jqueryMap.$dataenter.text("Loaded");
 		return false;
 	};
 	
@@ -377,8 +386,9 @@ bsv.data = (function() {
 		$container.html( configMap.main_html );
 		setJqueryMap();
 		// Load up example dataset
-		setExampleData();
+
 		setParamMap();
+		setExampleData();
 		// Initialise slider and bind event handlers
 		jqueryMap.$closer
 			.attr('title', configMap.dataSlider_in_title)

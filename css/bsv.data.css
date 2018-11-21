@@ -26,6 +26,7 @@
 .bsv-data-params, .bsv-data-data {
 	left: 		35px;
 	right:		20px;
+	padding: 0 0 35px 0;
 }
 
 .bsv-data-params { 
@@ -33,9 +34,12 @@
 }
 
 .bsv-data-data { 
-	top:	490px;
+	top:	320px;
 }
 
+hr{
+	margin: 0px 30px;
+}
 
 legend {
     color: #fff;
