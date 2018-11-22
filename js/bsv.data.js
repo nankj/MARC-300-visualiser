@@ -247,7 +247,7 @@ bsv.data = (function() {
 		
 		for (i = 0 ; i < array.length ; i++){
 			if (!firstTime) {array[i].pop()};
-			if (array[i][col] == "0" | array[i][col] === "") {array[i][col] = configMap.average_page_count};
+			if (array[i][col] == "0" || array[i][col] === "") {array[i][col] = configMap.average_page_count};
 			// *1* Convert roman to integer, fix hyphens and brackets, handle ranges
 			var result = array[i][col].replace(regexRoman, convertRoman)
 									  .replace(regexBadHyphens,"-")

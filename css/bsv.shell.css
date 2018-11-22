@@ -38,14 +38,25 @@
 	left:	172px;
 }
 
-#btn4 {
-	left:	256px;
+#btn4,#btn5,#btn6 {
 	background: dodgerblue;
 }
 	#btn4:hover {
 		background: steelblue;
 		cursor:		pointer;
 	}
+
+#btn4 {
+	left:	256px;
+}
+
+#btn5 {
+	left:	340px;
+}
+
+#btn6 {
+	left:	424px;
+}
 
 .bsv-shell-main {
 	top:	40px;
