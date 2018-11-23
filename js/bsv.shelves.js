@@ -184,8 +184,10 @@ bsv.shelves = (function() {
 			widthCol	= bsv.data.getParams("widthCol"),
 			heightCol	= bsv.data.getParams("heightCol"),
 			shelfHeight = configMap.shelfParams.bookSpace - 1,
+			actualWidth	= Number(dataRow[widthCol]),
+			estWidth	= Number(dataRow[dataRow.length - 1]),
 			bookAttrs = {},
-			g, nextBook, j, toolTip
+			percentDiff, g, nextBook, j, toolTip
 			;
 
 		trueWidth	?	bookAttrs.width  = Number(dataRow[widthCol])
@@ -195,7 +197,10 @@ bsv.shelves = (function() {
 		bookAttrs.y		 = shelfHeight - bookAttrs.height;		
 		bookAttrs.width  > 32   ? bookAttrs["class"] =  "thick" : bookAttrs["class"] =  "thin";
 		bookAttrs.height > 220  ? bookAttrs["class"] += " tall" : bookAttrs["class"] += " short";
-//		bookAttrs.width  > 32   ? bookAttrs.fill =  "green" : bookAttrs.fill =  "orange";
+		if (!trueWidth) {		
+			percentDiff = percentageDifference(actualWidth, estWidth);
+			if (percentDiff > 20 || percentDiff < -20) {bookAttrs["class"] = "badbook"};
+		}		
 
 		// Create a <g> element to hold each book and tooltip
 		g = makeSVG("g");     
@@ -239,7 +244,7 @@ bsv.shelves = (function() {
 		
 		stateMap.stats.sconulWidth += sconul;	
 		svg_x	= svg_x - configMap.shelfParams.startX;
-		percentDiff = percentageDifference(svg_x,estWidth)
+		percentDiff = percentageDifference(svg_x,estWidth);
 		percentDiff > 10 || percentDiff < -10 ? percentClass = "bad" : percentClass = "percent";
 		percentDiff = percentDiff.toFixed(1) + "%";
 		percentSconul = percentageDifference(svg_x,sconul).toFixed(1) + "%";

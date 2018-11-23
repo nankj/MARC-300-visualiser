@@ -92,6 +92,15 @@
 		fill-opacity: 0.8;
 	}
 
+.badbook {
+  fill: #DB7093;
+  fill-opacity: 0.5;
+  transition: all 0.2s;
+}
+	.badbook:hover{
+		fill-opacity: 0.8;
+	}
+
 .percent {
 	font-size: 86px; 
 	fill: gray;
