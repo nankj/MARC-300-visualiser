@@ -22,8 +22,8 @@ bsv.shelves = (function() {
 			shelfParams : {
 				x 			: 0,
 				y			: 0,
-				startX		: 7,
-				totalWidth	: 1000,
+				startX		: 8,
+				totalWidth	: 996,
 				thickness	: 18,
 				bookSpace	: 292,
 				shelfBox			: function (){
@@ -59,19 +59,31 @@ bsv.shelves = (function() {
 				totalShelves: 0,
 				trueWidth 	: 0,
 				estWidth	: 0,
+				sconulWidth	: 0,
 				update		: function (books, shelves, width, est){
 					this.totalBooks += books;
 					this.totalShelves = this.totalShelves + shelves;
 					this.trueWidth = this.trueWidth + width;
 					this.estWidth = this.estWidth + est;
 				},
+				reset		: function (){
+					this.totalBooks 	= 0;
+					this.totalShelves 	= 0;
+					this.trueWidth 		= 0;
+					this.estWidth 		= 0;
+					this.sconulWidth	= 0;				
+				},
 				output		: function (){
-					var result 	= "Books:     " + this.totalBooks + "\n"
-								+ "Shelves:   " + this.totalShelves + "\n"
-								+ "Total run: " + this.trueWidth.toFixed() + "\n"
-								+ "Est. run:  " + this.estWidth.toFixed() + "\n"
-								+ "% diff:    " 
+					var result 	= "Books:      " + this.totalBooks + "\n"
+								+ "Shelves:    " + this.totalShelves + "\n"
+								+ "Total run:  " + this.trueWidth.toFixed() + "\n"
+								+ "Est. run:   " + this.estWidth.toFixed() + "\n"
+								+ "% diff:     " 
 								+ percentageDifference(this.trueWidth, this.estWidth).toFixed(1)
+								+ "%" + "\n\n"
+ 								+ "SCONUL run: " + this.sconulWidth.toFixed() + "\n"
+ 								+ "% diff:     "
+								+ percentageDifference(this.trueWidth, this.sconulWidth).toFixed(1)
 								+ "%";
 					return result;
 				}
@@ -224,7 +236,8 @@ bsv.shelves = (function() {
 			sconul	= bookCount * 27.8,
 			percentDiff, percentClass, percent, percentSconul,
 			shelfInfo, shelfTotal, estTotal;
-			
+		
+		stateMap.stats.sconulWidth += sconul;	
 		svg_x	= svg_x - configMap.shelfParams.startX;
 		percentDiff = percentageDifference(svg_x,estWidth)
 		percentDiff > 10 || percentDiff < -10 ? percentClass = "bad" : percentClass = "percent";
@@ -246,14 +259,14 @@ bsv.shelves = (function() {
 		shelfInfo.innerHTML = bookCount + " books | SCONUL: " + sconul.toFixed() + "mm, " + percentSconul;
 		
 		shelfTotal = makeSVG("text", {
-			x 		: "15%",
+			x 		: "25%",
 			y 		: "62%",
 			class	: "svgText"
 		});
 		shelfTotal.innerHTML = "Measured: " + (svg_x).toFixed() + "mm";
 				
 		estTotal = makeSVG("text", {
-			x 		: "15%",
+			x 		: "25%",
 			y 		: "72%",
 			class	: "svgText"
 		});
@@ -272,6 +285,8 @@ bsv.shelves = (function() {
 	  	var svg_x       = configMap.shelfParams.startX,
 			start_x     = configMap.shelfParams.startX,
 			shelfSpace	= configMap.shelfParams.totalWidth,
+			shelfIDs	= bsv.data.getParams("shelf_id"),
+			shelfCol	= bsv.data.getParams("shelfCol"),
 			bookCount	= 0, 
 			estWidth	= 0,
 			headers		= data[0],
@@ -288,30 +303,39 @@ bsv.shelves = (function() {
 			// Update x position for next book, with 1mm space between, and track estWidth
 			svg_x = svg_x + width + 1;
 			estWidth = estWidth + Number(data[i][data[i].length - 1]) + 1;
-	
+			bookCount++;
+			
 			// If no more data, log stats and return
 			if (i == data.length-1) {
 				if (trueWidth) {
 					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 					jqueryMap.$info.append(infoBox);	
-//					stateMap.stats.update(bookCount, 1, svg_x - start_x, estWidth);
 					console.log(stateMap.stats.output());					
 				}
 				return stateMap.shelves_rendered = true;						
 			};
 			i++;
-			bookCount++;
 			
-			// If shelf is full, log stats and end loop
-			if (svg_x + width > (shelfSpace - start_x)) {
+			// If user has selected a shelf ID column, continue until it changes
+			if (shelfIDs[0]) {
+				// Check if next book has a different shelf ID
+				if (data[i][shelfCol] !== shelfIDs[shelfCount]){
+					if (trueWidth) {
+						infoBox = makeInfoBox (svg_x, estWidth, bookCount);
+						jqueryMap.$info.append(infoBox);
+					}					
+					break;			
+				}
+			// Otherwise continue until shelf is full, then log stats and end loop
+			} else if (svg_x + width > (shelfSpace - start_x)) {
 				if (trueWidth) {
 					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 					jqueryMap.$info.append(infoBox);
-
 				}
 				break;
-			}; 
+			}; 		
 		}
+		
 		// Create and fill further shelf if there's still more data
 		if (i < data.length) {
 			return fillBay(data, i, shelfCount, div, trueWidth);
@@ -346,6 +370,7 @@ bsv.shelves = (function() {
 				.text('Estimated')
 				.attr('title', 'Click to render shelves with modelled data')				
 			stateMap.shelves_rendered = false;
+			stateMap.stats.reset();
 			return false;
 		}		
 	};
@@ -369,6 +394,7 @@ bsv.shelves = (function() {
 				.text('Measured')
 				.attr('title', 'Click to render shelves with measured data');
 			stateMap.shelves_rendered = false;
+			stateMap.stats.reset();
 			return false;
 		}
 	};
@@ -396,6 +422,7 @@ bsv.shelves = (function() {
 				.text('Measured')
 				.attr('title', 'Click to render shelves with measured data');
 			stateMap.shelves_rendered = false;
+			stateMap.stats.reset();
 			return false;
 		}	
 	};	
