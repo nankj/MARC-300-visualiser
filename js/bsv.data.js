@@ -18,7 +18,7 @@ bsv.data = (function() {
 //				+		'<form id="data-params-form">'
 				+			'<div>'
 				+				'<label for="bsv-data-params-ppmm">Pages/mm:</label>'
-				+				'<input type="text" id="bsv-data-params-ppmm" value="10.67"/>'
+				+				'<input type="text" id="bsv-data-params-ppmm" value="11.89"/>'
 				+			'</div>'
 				+			'<div>'
 				+				'<label for="bsv-data-params-clothpb">Cloth ratio:</label>'
@@ -57,8 +57,8 @@ bsv.data = (function() {
 				+				'<input type="text" id="bsv-data-params-heightCol" value="2"/>'
 				+			'</div>'
 				+			'<div>'
-				+				'<label for="bsv-data-params-shelfCol">Shelf col:</label>'
-				+				'<input type="text" id="bsv-data-params-shelfCol" value=""/>'
+				+				'<label for="bsv-data-params-shelfCol">Shelf ID col:</label>'
+				+				'<input type="text" id="bsv-data-params-shelfCol" value="3"/>'
 				+			'</div>'				
 //			+			'</form>'
 			+		'</fieldset>'
@@ -116,12 +116,13 @@ bsv.data = (function() {
 								["12189840","i16223640","b15239184","ix,284p.","1997","Cerddi alltudiaeth : thema yn llenyddiaethau QuÃ©bec, Catalunya a Chymru.","16","22","p","2.101A"],
 								["12189848","i16223962","b15239573","viii,375p ;","1997","A guide to Welsh literature. Volume II, 1282-c.1550 / edited by A. O. H. Jarman and Gwilym Rees Hughes.","19.4","22","p","2.101A"],
 								["12323222","i19639971","b18600815","xvii, 491p. ;","2005","LlÃªn yr uchelwyr : hanes beirniadol llenyddiaeth Gymraeg 1300-1525 / Dafydd Johnston.","30.2","25","c","2.101A"],
-								["12357171","i21260333","b20920969","xxiv, 317 p. ;","2013","Darogan : prophecy, lament and absent heroes in medieval Welsh literature / Aled Llion Jones.","32.3","23","c","2.101A"],
-								["16180884","i21823078","b21390368","86p. ;","1977","Crefft y llenor / John Gwilym Jones.","12.2","23","c","2.101A"]]
+								["12357171","i21260333","b20920969","xxiv, 317 p. ;","2013","Darogan : prophecy, lament and absent heroes in medieval Welsh literature / Aled Llion Jones.","32.3","23","c","2.101B"],
+								["16180884","i21823078","b21390368","86p. ;","1977","Crefft y llenor / John Gwilym Jones.","12.2","23","c","2.101B"]]
 		},
 		stateMap  = { 
 			$container 			: null,
 			is_dataSlider_in	: true,
+			shelf_id_exists 	: false
 		},
 		paramMap  = {},
 		bookData  = [],
@@ -129,7 +130,7 @@ bsv.data = (function() {
 		
 		setJqueryMap, toggleDataSlider, setParamMap, initModule,
 		browserSupportFileUpload, uploadCSV, setExampleData, numberRange,
-		convertRoman, sumIntegers, marc300ToWidth, getData, getParams,
+		convertRoman, sumIntegers, marc300ToWidth, mapShelfIDs, getData, getParams,
 		onChangeUploadCSV, onClickParamBtn, onClickSlide, onClickExampleData;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
@@ -158,7 +159,7 @@ bsv.data = (function() {
 				data = $.csv.toArrays(csvData);
 				if (data && data.length > 0) {
 					bookData = marc300ToWidth(data, paramMap.marcCol);
-					console.log("bookData updated");
+					paramMap.shelf_id = mapShelfIDs(bookData);
 				} else {
 				  	alert('No data to import!');
 				}
@@ -175,8 +176,10 @@ bsv.data = (function() {
 		paramMap.marcCol 	= 3;
 		paramMap.widthCol	= 6;
 		paramMap.heightCol	= 7;
+		paramMap.shelfCol	= 9;
  		paramMap.ppmm		=	jqueryMap.$ppmm.val();
-		bookData = marc300ToWidth(configMap.exampleData, paramMap.marcCol);		
+		bookData = marc300ToWidth(configMap.exampleData, paramMap.marcCol);	
+		paramMap.shelf_id = mapShelfIDs(bookData);	
 		jqueryMap.$datacsv.val("");
 		jqueryMap.$dataenter.text("Loaded");		
 	};
@@ -265,6 +268,17 @@ bsv.data = (function() {
 		return array;
 	};
 	
+	mapShelfIDs = function (data) {
+		var col 	= paramMap.shelfCol,
+			result 	= [],
+			i, shelf;
+		for (i = 0 ; i < data.length ; i++) {
+			shelf = data[i][col];
+			result.indexOf(shelf) == -1	? result.push(shelf)
+										: result;
+		}
+		return result;
+	};
 	
 	//----------------END UTILITY METHODS-----------------------------
 	
@@ -331,7 +345,7 @@ bsv.data = (function() {
 	// End DOM method / toggleDataSlider /
 
 	// Begin DOM method / setParamMap /
-	// Purpose:		Records updated parameters in stateMap
+	// Purpose:		Records updated parameters in paramMap
 	// 				and applies them to data, if defined 
 	// Arguments: 	none
 	// Returns:		nothing
@@ -343,10 +357,17 @@ bsv.data = (function() {
 			widthCol	:	jqueryMap.$widthCol.val(),
 			heightCol	:	jqueryMap.$heightCol.val(),
 			shelfCol	:	jqueryMap.$shelfCol.val(),
-//			shelfHeight :	291 		// Move to shelves module
 		};
-		bookData[0] 	? 	bookData = marc300ToWidth(bookData, paramMap.marcCol)
-						:	bookData;	
+		if (bookData[0]) {
+			bookData = marc300ToWidth(bookData, paramMap.marcCol);
+			if (paramMap.shelfCol > 0) {
+				stateMap.shelf_id_exists = true; 
+				paramMap.shelf_id = mapShelfIDs(bookData);
+			} else { 
+				stateMap.shelf_id_exists = false; 
+				paramMap.shelf_id = null;
+			}
+		}
 	};
 	// End DOM method / setParamMap /
 
