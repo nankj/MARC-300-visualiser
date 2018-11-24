@@ -63,8 +63,8 @@ bsv.data = (function() {
 //			+			'</form>'
 			+		'</fieldset>'
 			+	'</div>',
-			dataSlider_extend_time		:	600,
-			dataSlider_retract_time		:	600,
+			dataSlider_extend_time		:	300,
+			dataSlider_retract_time		:	300,
 			dataSlider_extend_width		:	0,
 			dataSlider_retract_width	:	-415,
 			dataSlider_out_title		:	'Click to close',
@@ -381,18 +381,21 @@ bsv.data = (function() {
 	
 	onClickParamBtn = function (event) {
 		setParamMap();
+		toggleDataSlider(false);
 		return false;
 	};
 	
 	onChangeUploadCSV = function (event) {
 		setParamMap();
 		uploadCSV(event);
-		jqueryMap.$dataenter.text("Use");		
+		jqueryMap.$dataenter.text("Use");
+		toggleDataSlider(false);
 		return false;
 	};
 	
 	onClickExampleData = function (event) {
 		setExampleData();
+		toggleDataSlider(false);
 		return false;
 	};
 	

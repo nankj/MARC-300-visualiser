@@ -45,16 +45,19 @@ bsv.shelves = (function() {
 								};
 					return result;
 				}
-			}
-						
+            },
+            
+            bookDrawDelay    : 20,			
 		},
 		
 		stateMap  = { 
 			$container 			: null,
 			is_live_open		: false,
 			shelves_rendered	: false,
-			shelfCount			: 0,
-			stats				: {
+            shelfCount			: 0,
+            baysFilled			: 0,
+            bookDrawDelay		: {},
+            stats				: {
 				totalBooks	: 0,
 				totalShelves: 0,
 				trueWidth 	: 0,
@@ -154,7 +157,7 @@ bsv.shelves = (function() {
 	// End DOM method /toggleTest/ 
 
 	// Begin DOM method /makeShelf/ 
-	makeShelf = function (id, div){
+	makeShelf = function (bay, shelf, div){
 		var newShelf = makeSVG("svg", configMap.shelfParams.shelfBox());
 		div.append(newShelf);
 
@@ -170,7 +173,7 @@ bsv.shelves = (function() {
 			);     
 		g_shelf.appendChild(r);
 	
-		var books_id = "books_" + id;
+		var books_id = "books_" + bay + "_" + (shelf + 1);
 		var g_books = makeSVG("g", {id: books_id});     
 		newShelf.appendChild(g_books);
 	
@@ -186,7 +189,8 @@ bsv.shelves = (function() {
 			shelfHeight = configMap.shelfParams.bookSpace - 1,
 			actualWidth	= Number(dataRow[widthCol]),
 			estWidth	= Number(dataRow[dataRow.length - 1]),
-			bookAttrs = {},
+			bookAttrs 	= {},
+			delay		= stateMap.bookDrawDelay[shelf],
 			percentDiff, g, nextBook, j, toolTip
 			;
 
@@ -204,11 +208,9 @@ bsv.shelves = (function() {
 
 		// Create a <g> element to hold each book and tooltip
 		g = makeSVG("g");     
-		shelf.appendChild(g);
 
 		// Create a <rect> element to draw book
 		nextBook = makeSVG("rect", bookAttrs);
-
 		g.appendChild(nextBook);
 
 		// Add a tooltip to hold row of data as text (labels from header row)	
@@ -218,6 +220,13 @@ bsv.shelves = (function() {
 		toolTip = makeSVG("title");
 		toolTip.innerHTML = titleText;
 		g.appendChild(toolTip);
+
+        // After a delay, add the book to the shelf
+        function shelveBook() {
+            shelf.appendChild(g);
+        };
+        setTimeout(shelveBook, delay);
+		stateMap.bookDrawDelay[shelf] += configMap.bookDrawDelay;
 
 		return bookAttrs.width;
 	};
@@ -292,14 +301,16 @@ bsv.shelves = (function() {
 			shelfSpace	= configMap.shelfParams.totalWidth,
 			shelfIDs	= bsv.data.getParams("shelf_id"),
 			shelfCol	= bsv.data.getParams("shelfCol"),
-			bookCount	= 0, 
+			bookCount	= 0,
+			bay			= stateMap.baysFilled,
 			estWidth	= 0,
 			headers		= data[0],
 			colCount	= headers.length-1,
 			width, shelf, infoBox, percent, shelfTotal, estTotal;
 		  
-		shelfCount += makeShelf(i, div);
-		shelf = document.getElementById("books_" + i);
+		shelfCount += makeShelf(bay, shelfCount, div);
+		shelf = document.getElementById("books_" + bay + "_" + shelfCount);
+		stateMap.bookDrawDelay[shelf] = configMap.bookDrawDelay;
 		
 	  // loop over data file
 		while (i <= data.length-1) {
@@ -317,6 +328,7 @@ bsv.shelves = (function() {
 					jqueryMap.$info.append(infoBox);	
 					console.log(stateMap.stats.output());					
 				}
+				stateMap.baysFilled++;
 				return stateMap.shelves_rendered = true;						
 			};
 			i++;
@@ -325,6 +337,7 @@ bsv.shelves = (function() {
 			if (shelfIDs[0]) {
 				// Check if next book has a different shelf ID
 				if (data[i][shelfCol] !== shelfIDs[shelfCount]){
+//					stateMap.bookDrawDelay = configMap.bookDrawDelay;
 					if (trueWidth) {
 						infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 						jqueryMap.$info.append(infoBox);
@@ -333,6 +346,7 @@ bsv.shelves = (function() {
 				}
 			// Otherwise continue until shelf is full, then log stats and end loop
 			} else if (svg_x + width > (shelfSpace - start_x)) {
+//				stateMap.bookDrawDelay = configMap.bookDrawDelay;
 				if (trueWidth) {
 					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 					jqueryMap.$info.append(infoBox);
@@ -359,7 +373,7 @@ bsv.shelves = (function() {
 	onClickRenderMeasured = function ( event ) {
 		if (stateMap.shelves_rendered === false) {
 			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testw);
+			fillBay(data, 1, 0, jqueryMap.$testw, true);
 			jqueryMap.$btn4
 				.text('Clear')
 				.attr('title', 'Click to clear shelves');				
@@ -383,7 +397,7 @@ bsv.shelves = (function() {
 	onClickRenderEstimated = function (event) {
 		if (stateMap.shelves_rendered === false) {
 			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testm, false);
+			fillBay(data, 1, 0, jqueryMap.$testw, false);
 			jqueryMap.$btn5
 				.text('Clear')
 				.attr('title', 'Click to clear shelves');				
@@ -407,8 +421,8 @@ bsv.shelves = (function() {
 	onClickRenderComparison = function (event) {
 		if (stateMap.shelves_rendered === false) {
 			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testm, false);
 			fillBay(data, 1, 0, jqueryMap.$testw, true);
+			fillBay(data, 1, 0, jqueryMap.$testm, false);
 			jqueryMap.$btn6
 				.text('Clear')
 				.attr('title', 'Click to clear shelves');				
