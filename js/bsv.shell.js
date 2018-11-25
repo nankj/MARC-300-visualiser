@@ -22,6 +22,7 @@ bsv.shell = (function() {
 			+	'</div>'
 			+	'<div class="bsv-shell-data"></div>'
 			+	'<div class="bsv-shell-foot"></div>'
+			+	'<div class="bsv-shell-data-modal"></div>'
 			+	'<div class="bsv-shell-start">'
 			+		'<div class="bsv-shell-start-SVG"></div>'
 			+		'<div class="bsv-shell-start-button"></div>'

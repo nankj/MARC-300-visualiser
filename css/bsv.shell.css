@@ -5,7 +5,7 @@
  
  .bsv-shell-head, .bsv-shell-head-btn, .bsv-shell-main, 
  .bsv-shell-data, .bsv-shell-foot, .bsv-shell-start,
- .bsv-shell-start-SVG, .bsv-shell-start-button, h1, h2 {
+ .bsv-shell-start-SVG, .bsv-shell-start-button, .bsv-shell-data-modal {
  	position: absolute;
  }
 
@@ -32,14 +32,9 @@
 	left		: 50%;
 	width		: 70%;
 	min-width	: 500px;
-	height		: 26vw;
 /*	background	: pink;*/
 	text-align: center;	
-	z-index		: 2;
-}
-
-.bsv-shell-start-strapline {
-
+	z-index		: 1;
 }
 
 .bsv-shell-start-button {
@@ -135,7 +130,21 @@
 	bottom:	40px;
 	right: 	-415px;
 	background: gray;
-	border-radius:		12px 0 0 12px;
+	border-radius:		4px 0 0 4px;
+}
+
+.bsv-shell-data-modal {
+
+	margin-top	: -15%;
+	margin-left	: -15%;
+	top			: 50%;
+	left		: 50%;
+	width		: 30%;
+	height		: 50%;
+	background	: gray;
+	border-radius : 4px;
+	text-align: center;	
+	z-index		: 2;
 }
 
 .bsv-shell-foot {
