@@ -173,15 +173,15 @@ bsv.shelves = (function() {
 			);     
 		g_shelf.appendChild(r);
 	
-		var books_id = "books_" + bay + "_" + (shelf + 1);
+		var books_id = "books_" + bay + "_" + (shelf);
 		var g_books = makeSVG("g", {id: books_id});     
 		newShelf.appendChild(g_books);
 	
-		return 1;
+		return books_id;
 	};
 	// End DOM method /makeShelf/ 
 	
-	makeBook = function(dataRow, svg_x, shelf, headerRow, trueWidth){
+	makeBook = function(dataRow, svg_x, shelf, headerRow, trueWidth, is_title){
 	
 		var	titleText 	= "",
 			widthCol	= bsv.data.getParams("widthCol"),
@@ -205,21 +205,25 @@ bsv.shelves = (function() {
 			percentDiff = percentageDifference(actualWidth, estWidth);
 			if (percentDiff > 20 || percentDiff < -20) {bookAttrs["class"] = "badbook"};
 		}		
-
+		if (is_title) {
+			bookAttrs["fill-opacity"] = 1;
+		}
 		// Create a <g> element to hold each book and tooltip
 		g = makeSVG("g");     
 
 		// Create a <rect> element to draw book
 		nextBook = makeSVG("rect", bookAttrs);
 		g.appendChild(nextBook);
-
-		// Add a tooltip to hold row of data as text (labels from header row)	
-		for (j = 0 ; j < headerRow.length; j++) {
-			titleText += headerRow[j] + ": " + dataRow[j] + "\n";
-		}
-		toolTip = makeSVG("title");
-		toolTip.innerHTML = titleText;
-		g.appendChild(toolTip);
+		
+		
+		if (!is_title) {
+			// Add a tooltip to hold row of data as text (labels from header row)	
+			for (j = 0 ; j < headerRow.length; j++) {
+				titleText += headerRow[j] + ": " + dataRow[j] + "\n";
+			}
+			toolTip = makeSVG("title");
+			toolTip.innerHTML = titleText;
+			g.appendChild(toolTip);
 
         // After a delay, add the book to the shelf
         function shelveBook() {
@@ -227,11 +231,13 @@ bsv.shelves = (function() {
         };
         setTimeout(shelveBook, delay);
 		stateMap.bookDrawDelay[shelf] += configMap.bookDrawDelay;
-
+		} else {
+			shelf.appendChild(g);
+		}
 		return bookAttrs.width;
 	};
 	
-	
+	// Create an SVG. Parameters are type, and as many attributes as needed as an object
 	makeSVG = function(type, attrs){
 		var result = document.createElementNS("http://www.w3.org/2000/svg", type);
 		if (attrs) {
@@ -261,28 +267,28 @@ bsv.shelves = (function() {
 		percent = makeSVG("text", {
 			x 		: "15%",
 			y 		: "50%",
-			class	: percentClass
+			"class"	: percentClass
 		});
 		percent.innerHTML = percentDiff;
 		
 		shelfInfo =  makeSVG("text", {
 			x 		: "3%",
 			y 		: "100%",
-			class	: "svgText"
+			"class"	: "svgText"
 		});
 		shelfInfo.innerHTML = bookCount + " books | SCONUL: " + sconul.toFixed() + "mm, " + percentSconul;
 		
 		shelfTotal = makeSVG("text", {
 			x 		: "25%",
 			y 		: "62%",
-			class	: "svgText"
+			"class"	: "svgText"
 		});
 		shelfTotal.innerHTML = "Measured: " + (svg_x).toFixed() + "mm";
 				
 		estTotal = makeSVG("text", {
 			x 		: "25%",
 			y 		: "72%",
-			class	: "svgText"
+			"class"	: "svgText"
 		});
 		estTotal.innerHTML = "Estimated: " + (estWidth).toFixed() + "mm";	
 
@@ -294,8 +300,10 @@ bsv.shelves = (function() {
 		return infoBox;	
 	};
 	
-
-	fillBay = function (data, i, shelfCount, div, trueWidth){
+	// optional boolean 'is_title' parameter. If included, draws pared-down shelf for 
+	// start screen
+	
+	fillBay = function (data, i, shelfCount, div, trueWidth, is_title){
 	  	var svg_x       = configMap.shelfParams.startX,
 			start_x     = configMap.shelfParams.startX,
 			shelfSpace	= configMap.shelfParams.totalWidth,
@@ -308,13 +316,13 @@ bsv.shelves = (function() {
 			colCount	= headers.length-1,
 			width, shelf, infoBox, percent, shelfTotal, estTotal;
 		  
-		shelfCount += makeShelf(bay, shelfCount, div);
-		shelf = document.getElementById("books_" + bay + "_" + shelfCount);
+		shelfCount++;
+		shelf = document.getElementById(makeShelf(bay, shelfCount, div));
 		stateMap.bookDrawDelay[shelf] = configMap.bookDrawDelay;
 		
 	  // loop over data file
 		while (i <= data.length-1) {
-			width = makeBook(data[i], svg_x, shelf, headers, trueWidth);
+			width = makeBook(data[i], svg_x, shelf, headers, trueWidth, is_title);
 	
 			// Update x position for next book, with 1mm space between, and track estWidth
 			svg_x = svg_x + width + 1;
@@ -337,7 +345,7 @@ bsv.shelves = (function() {
 			if (shelfIDs[0]) {
 				// Check if next book has a different shelf ID
 				if (data[i][shelfCol] !== shelfIDs[shelfCount]){
-//					stateMap.bookDrawDelay = configMap.bookDrawDelay;
+					if (is_title) {return};
 					if (trueWidth) {
 						infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 						jqueryMap.$info.append(infoBox);
@@ -346,7 +354,6 @@ bsv.shelves = (function() {
 				}
 			// Otherwise continue until shelf is full, then log stats and end loop
 			} else if (svg_x + width > (shelfSpace - start_x)) {
-//				stateMap.bookDrawDelay = configMap.bookDrawDelay;
 				if (trueWidth) {
 					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
 					jqueryMap.$info.append(infoBox);
@@ -482,6 +489,9 @@ bsv.shelves = (function() {
 	};
 	// End Public method /initModule/
 	
-	return { initModule : initModule };
+	return { 
+		initModule 	: initModule, 
+		fillBay		: fillBay
+		};
 	//----------------END PUBLIC METHODS------------------------------	
 }());

@@ -116,8 +116,14 @@ bsv.data = (function() {
 								["12189840","i16223640","b15239184","ix,284p.","1997","Cerddi alltudiaeth : thema yn llenyddiaethau QuÃ©bec, Catalunya a Chymru.","16","22","p","2.101A"],
 								["12189848","i16223962","b15239573","viii,375p ;","1997","A guide to Welsh literature. Volume II, 1282-c.1550 / edited by A. O. H. Jarman and Gwilym Rees Hughes.","19.4","22","p","2.101A"],
 								["12323222","i19639971","b18600815","xvii, 491p. ;","2005","LlÃªn yr uchelwyr : hanes beirniadol llenyddiaeth Gymraeg 1300-1525 / Dafydd Johnston.","30.2","25","c","2.101A"],
-								["12357171","i21260333","b20920969","xxiv, 317 p. ;","2013","Darogan : prophecy, lament and absent heroes in medieval Welsh literature / Aled Llion Jones.","32.3","23","c","2.101B"],
-								["16180884","i21823078","b21390368","86p. ;","1977","Crefft y llenor / John Gwilym Jones.","12.2","23","c","2.101B"]]
+								["12357171","i21260333","b20920969","xxiv, 317 p. ;","2013","Darogan : prophecy, lament and absent heroes in medieval Welsh literature / Aled Llion Jones.","32.3","23","c","2.101A"],
+								["16180884","i21823078","b21390368","86p. ;","1977","Crefft y llenor / John Gwilym Jones.","12.2","23","c","2.101A"],
+								["12323222","i19639971","b18600815","xvii, 491p. ;","2005","LlÃªn yr uchelwyr : hanes beirniadol llenyddiaeth Gymraeg 1300-1525 / Dafydd Johnston.","30.2","25","c","2.101A"],
+								["16074306","i14473586","b13648561","xvi, 156 p., [5] leaves of plates :","1954","Morgan Llwyd y llenor / gan Hugh Bevan.","19","22","c","2.101A"],
+								["12029080","i10920559","b10787008","78p :","1989","Llenyddiaeth y Cymry : cyflwyniad darluniadol. Cyf. 2, O tua 1530 i tua 1880 / gan R. Geraint Gruffydd.","12","24","p","2.101A"],								
+								["12189840","i16223640","b15239184","ix,284p.","1997","Cerddi alltudiaeth : thema yn llenyddiaethau QuÃ©bec, Catalunya a Chymru.","16","21","p","2.101A"],
+								["12001654","i10793392","b10684311","93p :","1986","Medieval religious literature / D. Simon Evans.","14.2","25","c","2.101B"]]
+			
 		},
 		stateMap  = { 
 			$container 			: null,
@@ -438,12 +444,17 @@ bsv.data = (function() {
 	getParams	= function (param) {
 		return paramMap[param];
 	};
+	
+	setParam = function (param, val)	{
+		paramMap[param] = val;
+	};
 
 	
 	return { 
 		initModule 	: initModule,
 		getData		: getData,
 		getParams	: getParams,
+		setParam	: setParam
 		};
 	//----------------END PUBLIC METHODS------------------------------	
 }());

@@ -14,7 +14,7 @@
 	left:	0.3vw;
 	right:	0.3vw;
 	bottom:	0.3vw;
-	background: beige;
+	background: #D2D7D3;
 	overflow: scroll;
 }
 
@@ -24,7 +24,7 @@
 .bsv-shelves-live-width {
 	top:	5vw;
 	bottom: 0.3vw;
-	background: beige;
+	background: #D2D7D3;
 }
 
 .bsv-shelves-test-width {
@@ -35,7 +35,7 @@
 .bsv-shelves-test-info {
 	left: 44vw;
 	width: 13vw;
-	background: beige;
+	background: #D2D7D3;
 }
 
 .bsv-shelves-test-MARC {

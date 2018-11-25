@@ -3,8 +3,9 @@
  * Shell styles
  */
  
- .bsv-shell-head,  .bsv-shell-head-btn, .bsv-shell-main, 
- .bsv-shell-data, .bsv-shell-foot {
+ .bsv-shell-head, .bsv-shell-head-btn, .bsv-shell-main, 
+ .bsv-shell-data, .bsv-shell-foot, .bsv-shell-start,
+ .bsv-shell-start-SVG, .bsv-shell-start-button, h1, h2 {
  	position: absolute;
  }
 
@@ -13,7 +14,69 @@
 	left: 	0;
 	right: 	0;
 	height: 40px; /*3vw*/
-	background: lightgray;
+	background: #D2D7D3;
+}
+
+.bsv-shell-start {
+	top: 	0;
+	left: 	0;
+	right: 	0;
+	height: 100%;
+	background: #D2D7D3;	
+
+}
+
+.bsv-shell-start-SVG {
+	margin-left	: -35%;
+	top			: 15%;
+	left		: 50%;
+	width		: 70%;
+	min-width	: 500px;
+	height		: 26vw;
+/*	background	: pink;*/
+	text-align: center;	
+	z-index		: 2;
+}
+
+.bsv-shell-start-strapline {
+
+}
+
+.bsv-shell-start-button {
+/*	display: inline-block;*/
+	text-align: center;
+	padding: 0.6em;
+	top: 	calc( 15% + 32vw); 
+	left: 	46%; 
+	height: 6%;
+	max-height: 60px;
+	width: 	8%;
+	min-width: 100px;
+	background: #F2F1EF;
+	color	: gray;
+	font-size : 1.6em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.4s;
+}
+	.bsv-shell-start-button:hover {
+		background: gray;
+		color	: #F2F1EF;
+	}
+
+
+.titleText {
+	display: inline-block;
+/*	font  	: italic 21vh  serif; */
+	font  	: italic 7.2em serif;	
+	font-weight : 400;
+	fill	: #F2F1EF;
+}
+
+
+.strapline {
+	font-size : 2em;
+	fill	: gray;	
 }
 
 .bsv-shell-head-btn {

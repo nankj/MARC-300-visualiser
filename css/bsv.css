@@ -9,9 +9,9 @@
    padding:	0;
    box-sizing: border-box;
    }
-  h1,h2,h3,h4,h5,h6,p { 
+ /* h1,h2,h3,h4,h5,h6,p { 
    margin-bottom: 10px;
-   }
+   }*/
   ol,ul,dl {
    list-style-position: inside;
    }
@@ -20,7 +20,7 @@
 
 /** Begin standard selectors */
 body {
-	font: 				13px   Avenir Next, Avenir, sans-serif;
+	font: 				15px   Avenir Next, Avenir, sans-serif;
 	color:				#444;
 	background-color:	#888;
 }
