@@ -518,8 +518,8 @@ bsv.shelves = (function() {
 			comp_lefts 	= ["7vw", "44vw", "57.9vw"],
 //				widths	= ["51.4vw", "18.6vw", "15vw"],
 //				lefts 	= ["7vw", "59.4vw", "78.9vw"],
-				widths	= ["44.8vw", "16.2vw", "12vw"],
-				lefts 	= ["19vw", "64.8vw", "81.9vw"],
+				widths	= ["44.8vw", "16.2vw", "9vw"],
+				lefts 	= ["22vw", "67.8vw", "84.9vw"],
 
 
 		 	i, div, targetDiv;

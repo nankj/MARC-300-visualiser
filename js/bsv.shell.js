@@ -14,7 +14,7 @@ bsv.shell = (function() {
 			+		'<div id="sig">Bookshelf Visualiser</div>'
 			+		'<div class="bsv-shell-head-btn" id="btn1"></div>'
 			+		'<div class="bsv-shell-head-btn" id="btn2"></div>'
-			+		'<div class="bsv-shell-head-btn" id="btn3">About</div>'
+			+		'<div class="bsv-shell-head-btn" id="btn3"></div>'
 			+		'<div class="bsv-shell-head-btn" id="btn4"></div>'	
 			+	'</div>'
 			+	'<div class="bsv-shell-main">'
@@ -41,7 +41,7 @@ bsv.shell = (function() {
 			+	'</div>'
 			+	'</div>'
 			+	'<div class="bsv-shell-data-modal"></div>'			
-			+	'<div class="bsv-shell-foot">Created by Joe Nankivell, &copy; 2018</div>'
+			+	'<div class="bsv-shell-foot">&copy; Joe Nankivell, 2018</div>'
 			+	'<div class="bsv-shell-start">'
 			+		'<div class="bsv-shell-start-SVG"></div>'
 			+		'<div class="bsv-shell-start-button"></div>'
@@ -64,7 +64,7 @@ bsv.shell = (function() {
 		jqueryMap =	{},
 		
 		makeSVG, setJqueryMap, makeStartPage, onClickParams, onClickLogData, 
-		onClickDataModal, onClickStart, onClickCloseIntro, initModule;
+		onClickDataModal, onClickIntro, onClickStart, onClickCloseIntro, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -165,6 +165,13 @@ bsv.shell = (function() {
 		jqueryMap.$headbtns.removeClass('bsv-x-clearfloat');		
 		return false;
 	};
+
+	onClickIntro = function ( event ) {
+		jqueryMap.$intro.removeClass('bsv-x-clearfloat')
+		jqueryMap.$data.addClass('bsv-x-clearfloat');
+		jqueryMap.$headbtns.addClass('bsv-x-clearfloat');		
+		return false;
+	};
 	
 	onClickStart = function ( event ) {
 		jqueryMap.$start.empty();
@@ -173,7 +180,7 @@ bsv.shell = (function() {
 	};	
 
 	onClickCloseIntro = function ( event ) {
-		jqueryMap.$intro.empty();
+//		jqueryMap.$intro.empty();
 		jqueryMap.$intro.addClass('bsv-x-clearfloat');
 		jqueryMap.$headbtns.removeClass('bsv-x-clearfloat');
 		return false;
@@ -212,6 +219,11 @@ bsv.shell = (function() {
 			.attr('title', 'Log current parameters')
 			.click( onClickParams );
 
+		jqueryMap.$btn3
+			.text('About')
+			.attr('title', 'About')
+			.click( onClickIntro );
+			
 		jqueryMap.$btn4
 			.text('Change data')
 			.attr('title', 'Change data source')

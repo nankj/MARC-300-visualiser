@@ -54,7 +54,7 @@ bsv.data = (function() {
 			+				'<div class="bsv-data-params-columns">'
 			+					'<div id="marc-col">'
 			+						'<label class="column-label" for="bsv-data-params-marcCol">MARC 300:</label>'
-			+						'<input type="text" id="bsv-data-params-marcCol" value="3"/>'
+			+						'<input type="text" id="bsv-data-params-marcCol" value=""/>'
 			+					'</div>'	
 			+					'<div id="width-col">'
 			+						'<label class="column-label" for="bsv-data-params-widthCol">Width:</label>'
@@ -196,10 +196,11 @@ bsv.data = (function() {
 		paramMap.widthCol	= 6;
 		paramMap.heightCol	= 7;
 		paramMap.shelfCol	= 9;
-		paramMap.is_comparison = true;
+//		paramMap.is_comparison = true;
  		paramMap.ppmm		=	jqueryMap.$ppmm.val();
 		bookData = marc300ToWidth(configMap.exampleData, paramMap.marcCol);	
 		paramMap.shelf_id = mapShelfIDs(bookData);	
+		paramMap.is_comparison = false;
 		jqueryMap.$datacsv.val("");
 		jqueryMap.$dataenter.text("Loaded");		
 	};

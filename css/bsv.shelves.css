@@ -34,7 +34,7 @@
 	left:	16vw;
 	top:	10px;
 	background: #dfdcd1;
-	font-size: 52px; 
+	font-size: calc(35vmin / 8.5); 
 	color	: gray;
 	width:	68vw;
 	height:	80px;
@@ -175,7 +175,7 @@
 
 
 .percent {
-	font-size: 86px; 
+	font-size: 52px; 
 	fill: gray;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .bad {
-	font-size: 86px; 
+	font-size: 52px; 
 	fill: darkred;
 }
 
