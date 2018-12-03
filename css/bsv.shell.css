@@ -4,8 +4,10 @@
  */
  
  .bsv-shell-head, .bsv-shell-head-btn, .bsv-shell-main, 
- .bsv-shell-data, .bsv-shell-foot, .bsv-shell-start,
- .bsv-shell-start-SVG, .bsv-shell-start-button, .bsv-shell-data-modal {
+ .bsv-shell-data, .bsv-shell-data-modal, .bsv-shell-intro-modal-content,
+ .bsv-shell-intro-modal, .bsv-shell-intro-modal-exampledata,
+ .bsv-shell-intro-modal-choosedata, .bsv-shell-foot, .bsv-shell-start,
+ .bsv-shell-start-SVG, .bsv-shell-start-button, h1, h2 {
  	position: absolute;
  }
 
@@ -13,8 +15,14 @@
 	top: 	0;
 	left: 	0;
 	right: 	0;
-	height: 40px; /*3vw*/
-	background: #D2D7D3;
+	height: 55px;
+	background: #d3cfc3;
+}
+
+#sig {
+	color: white;
+	font: italic 2.5em serif;
+	padding: 8px 28px;	
 }
 
 .bsv-shell-start {
@@ -22,9 +30,9 @@
 	left: 	0;
 	right: 	0;
 	height: 100%;
-	background: #D2D7D3;	
-
+	background: #dfdcd1;	
 }
+
 
 .bsv-shell-start-SVG {
 	margin-left	: -35%;
@@ -32,13 +40,72 @@
 	left		: 50%;
 	width		: 70%;
 	min-width	: 500px;
-/*	background	: pink;*/
 	text-align: center;	
-	z-index		: 1;
+	z-index		: 2;
+}
+
+.bsv-shell-intro-modal, .bsv-shell-data-modal {
+	margin-top	: -220px;
+	margin-left	: -450px;
+	top			: 35%;
+	left		: 50%;
+	width		: 900px;
+	height		: 680px;
+	background	: #bcb9ad;
+	text-align: center;
+	z-index		: 0;
+	border-radius: 6px;
+}
+
+.bsv-shell-intro-modal {
+	background	: #d3cfc3;
+	border		: 4px #F2F1EF solid;
+}
+
+.bsv-shell-intro-modal-content {
+	top: 		20px;
+	left: 		20px;
+	right:		20px;
+	height:		190px;
+    padding: 	0 35px 0 0;
+    margin: 	35px 0 0 35px;
+    font-size:	1.2em;
+}
+
+.bsv-shell-intro-modal-exampledata,
+.bsv-shell-intro-modal-choosedata {
+	text-align: center;
+	padding: 10px;
+	top:	470px;
+	height: 50px;
+	width: 	28%;
+	min-width: 100px;
+	background: #F2F1EF;
+	color	: gray;
+	font-size : 1.2em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+	.bsv-shell-intro-modal-exampledata:hover,
+	.bsv-shell-intro-modal-choosedata:hover {
+		background: #5e5a56;
+		color	: #F2F1EF;
+	}
+
+.bsv-shell-intro-modal-exampledata {
+	margin-left: 14%;
+}
+
+.bsv-shell-intro-modal-choosedata {
+	margin-left: 54%;
+}
+
+.bsv-shell-start-strapline {
+
 }
 
 .bsv-shell-start-button {
-/*	display: inline-block;*/
 	text-align: center;
 	padding: 0.6em;
 	top: 	calc( 15% + 32vw); 
@@ -75,76 +142,58 @@
 }
 
 .bsv-shell-head-btn {
-	top: 	4px; /*0.3vw;*/
-	left: 	4px; /*0.3vw;*/
-	height: 32px;
-	width: 	80px;
+	text-align: center;
+	padding: 8px;
+	top: 	7px;
+	height: 44px;
+	width: 	150px;
 	color:	white;
-	background: orange;
+	font-size: 1.2em;
+	background: #bcb9ad;
 	transition: background 1s;
+	border-radius: 5px;
 }
 	.bsv-shell-head-btn:hover {
 		background: darkorange;
 		cursor:		pointer;
 	}
 
+#btn1 {
+	right: 8px;
+	width: 40px;
+	background: #bcb9ad;
+}
+
 #btn2 {
-	left:	88px;
+	right: 56px;
+	width: 40px;
+	background: #bcb9ad;
 }
 
 #btn3 {
-	left:	172px;
+	right: 104px;
+	color:	white;
+	font-size: 1.2em;
 }
 
-#btn4,#btn5,#btn6 {
-	background: dodgerblue;
+#btn4 {
+	right:	262px;
+	background: #bcb9ad;
+	color:	white;
+	font-size: 1.2em;
 }
 	#btn4:hover {
 		background: steelblue;
 		cursor:		pointer;
 	}
 
-#btn4 {
-	left:	256px;
-}
-
-#btn5 {
-	left:	340px;
-}
-
-#btn6 {
-	left:	424px;
-}
 
 .bsv-shell-main {
-	top:	40px;
+	top:	53px;
 	left:	0;
 	bottom:	40px;
 	right: 	0;
-	background: wheat;
-}
-
-.bsv-shell-data {
-	top:	40px;
-	width: 450px;
-	bottom:	40px;
-	right: 	-415px;
-	background: gray;
-	border-radius:		4px 0 0 4px;
-}
-
-.bsv-shell-data-modal {
-
-	margin-top	: -15%;
-	margin-left	: -15%;
-	top			: 50%;
-	left		: 50%;
-	width		: 30%;
-	height		: 50%;
-	background	: gray;
-	border-radius : 4px;
-	text-align: center;	
-	z-index		: 2;
+	background: #d3cfc3;
 }
 
 .bsv-shell-foot {
@@ -152,5 +201,8 @@
 	left:	0;
 	right:	0;
 	height:	40px;
-	background: black;
+	background: #d3cfc3;
+	color: gray;
+	font-size: 1.2em;
+	padding: 6px 18px;
 }

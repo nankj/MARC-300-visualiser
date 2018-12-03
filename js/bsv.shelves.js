@@ -11,12 +11,13 @@ bsv.shelves = (function() {
 		configMap = {
 			main_html : String()
 			+	'<div class="bsv-shelves-test">'
+			+		'<div class="bsv-shelves-test-header">'
+			+			'<div class="bsv-shelves-test-header-text"></div>'
+			+		'</div>'
 			+		'<div class="bsv-shelves-test-width"></div>'
 			+		'<div class="bsv-shelves-test-info"></div>'			
 			+		'<div class="bsv-shelves-test-MARC" ></div>'
-			+	'</div>'
-			+	'<div class="bsv-shelves-live">'
-			+		'<div class="bsv-shelves-live-width"></div>'
+			+		'<div class="bsv-shelves-test-render"></div>'						
 			+	'</div>',
 			
 			shelfParams : {
@@ -31,7 +32,10 @@ bsv.shelves = (function() {
 								+ " " + this.y 
 								+ " " + this.totalWidth 
 								+ " " + (this.thickness + this.bookSpace);
-					var result = {viewBox : viewBox};
+					var result = {
+						viewBox : viewBox,
+						"class"	: "shelfBox"
+					};
 					return result;
 				},
 				statsBox		: function (){
@@ -40,20 +44,24 @@ bsv.shelves = (function() {
 								+ " " + ((36.1/100) * this.totalWidth) 
 								+ " " + (this.thickness + this.bookSpace);
 					var result = {
-								viewBox : viewBox,
-								"class"	: "statsBox"
-								};
+						viewBox : viewBox,
+						"class"	: "statsBox"
+					};
 					return result;
 				}
             },
+            comparison		: {
+				div		 : ["$testw", "$testm", "$testm"],
+				widthCol : ["widthCol", "marcWidthCol", "marcWidthCol"  ]
+            },
             
-            bookDrawDelay    : 20,			
+            bookDrawDelay   : 20,			
 		},
 		
 		stateMap  = { 
 			$container 			: null,
-			is_live_open		: false,
 			shelves_rendered	: false,
+			fillBay_iteration	: 0,
             shelfCount			: 0,
             baysFilled			: 0,
             bookDrawDelay		: {},
@@ -89,16 +97,27 @@ bsv.shelves = (function() {
 								+ percentageDifference(this.trueWidth, this.sconulWidth).toFixed(1)
 								+ "%";
 					return result;
-				}
+				},
+				header		: function ( is_comparison ){
+					var result 	= this.totalShelves + " shelves, "
+								+ this.totalBooks 	+ " books | "
+								+ " total: " + mmToMetres(this.trueWidth);
+					if (is_comparison) {
+						var append 	= " | est: " + mmToMetres(this.estWidth)
+									+ " | " + percentageDifference(this.trueWidth, this.estWidth).toFixed(1)
+									+ "% diff.";
+						result += append;
+					}
+					return result;
+				}				
 			}
 		},
 		 
 		jqueryMap =	{},
 		
-		percentageDifference, setJqueryMap, toggleTest, makeShelf,
-		makeBook, makeSVG, makeInfoBox, fillBay, onClickToggle, 
-		onClickRenderMeasured, onClickRenderEstimated, onClickRenderComparison, 
-		initModule;
+		percentageDifference, mmToMetres, setJqueryMap, makeShelf,
+		makeSVG, makeInfoBox, makeBook, getWidthColAndDiv, fillBay, 
+		onClickRender, setDivWidth, initModule;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -107,6 +126,14 @@ bsv.shelves = (function() {
 			var result = 100*((b-a)/a)
 			return result;
 	}
+	
+	mmToMetres = function ( input ) {
+		if (input >= 999.5) {
+			input = input/1000;
+			return input.toFixed(2) + "m";
+		}
+		return input.toFixed() + "mm";
+	};
 		
 	//----------------END UTILITY METHODS-----------------------------
 	
@@ -118,46 +145,21 @@ bsv.shelves = (function() {
 			$shelves 	: $container,
 			$test		: $container.find( '.bsv-shelves-test'),
 			$info		: $container.find( '.bsv-shelves-test-info'),
+			$start		: $container.find( '.bsv-shell-start'),			
 			$testw		: $container.find( '.bsv-shelves-test-width'),
 			$testm		: $container.find( '.bsv-shelves-test-MARC'),
-			$live		: $container.find( '.bsv-shelves-live'),
-			$livew		: $container.find( '.bsv-shelves-live-width'),
-			$btn1		: $('div').find( '#btn1' ),
-			$btn4		: $('div').find( '#btn4' ),
-			$btn5		: $('div').find( '#btn5' ),
-			$btn6		: $('div').find( '#btn6' ),
+			$header		: $container.find( '.bsv-shelves-test-header-text'),
+			$render		: $container.find( '.bsv-shelves-test-render')
 			}
 	};
 	// End DOM method /setJqueryMap/	
 
-	// Begin DOM method /toggleTest/
-	// Purpose:		Switch between test suite and live tool
-	// Arguments: 	switch_to_test (boolean): true, to test; false, to live
-	// Returns:	boolean
-	//		* true		toggled
-	//		* false 	not toggled
-	// State:	sets stateMap.is_live_open
-	//		* true		test suite
-	//		* false		live tool
-	
-	toggleTest = function ( switch_to_test ) {
-		if (switch_to_test) {
-			jqueryMap.$test.removeClass('bsv-x-clearfloat');
-			jqueryMap.$live.addClass('bsv-x-clearfloat');
-			jqueryMap.$btn1.text('Live').attr('title', 'Click to switch to live version');
-			stateMap.is_live_open = false;
-			return true;
-		} 
-		jqueryMap.$live.removeClass('bsv-x-clearfloat');
-		jqueryMap.$test.addClass('bsv-x-clearfloat');	
-		jqueryMap.$btn1.text('Test').attr('title', 'Click to switch to test suite');
-		stateMap.is_live_open = true;
-		return true;
-	};
-	// End DOM method /toggleTest/ 
-
 	// Begin DOM method /makeShelf/ 
 	makeShelf = function (bay, shelf, div){
+		var books_id = "books_" + bay + "_" + (shelf);
+		
+		if (document.getElementById(books_id)) {return books_id;}
+				
 		var newShelf = makeSVG("svg", configMap.shelfParams.shelfBox());
 		div.append(newShelf);
 
@@ -172,71 +174,15 @@ bsv.shelves = (function() {
 				}
 			);     
 		g_shelf.appendChild(r);
-	
-		var books_id = "books_" + bay + "_" + (shelf);
+
 		var g_books = makeSVG("g", {id: books_id});     
 		newShelf.appendChild(g_books);
 	
 		return books_id;
 	};
 	// End DOM method /makeShelf/ 
-	
-	makeBook = function(dataRow, svg_x, shelf, headerRow, trueWidth, is_title){
-	
-		var	titleText 	= "",
-			widthCol	= bsv.data.getParams("widthCol"),
-			heightCol	= bsv.data.getParams("heightCol"),
-			shelfHeight = configMap.shelfParams.bookSpace - 1,
-			actualWidth	= Number(dataRow[widthCol]),
-			estWidth	= Number(dataRow[dataRow.length - 1]),
-			bookAttrs 	= {},
-			delay		= stateMap.bookDrawDelay[shelf],
-			percentDiff, g, nextBook, j, toolTip
-			;
 
-		trueWidth	?	bookAttrs.width  = Number(dataRow[widthCol])
-					:   bookAttrs.width  = Number(dataRow[dataRow.length - 1]);
-		bookAttrs.height = Number(dataRow[heightCol])*10;
-		bookAttrs.x		 = svg_x;
-		bookAttrs.y		 = shelfHeight - bookAttrs.height;		
-		bookAttrs.width  > 32   ? bookAttrs["class"] =  "thick" : bookAttrs["class"] =  "thin";
-		bookAttrs.height > 220  ? bookAttrs["class"] += " tall" : bookAttrs["class"] += " short";
-		if (!trueWidth) {		
-			percentDiff = percentageDifference(actualWidth, estWidth);
-			if (percentDiff > 20 || percentDiff < -20) {bookAttrs["class"] = "badbook"};
-		}		
-		if (is_title) {
-			bookAttrs["fill-opacity"] = 1;
-		}
-		// Create a <g> element to hold each book and tooltip
-		g = makeSVG("g");     
 
-		// Create a <rect> element to draw book
-		nextBook = makeSVG("rect", bookAttrs);
-		g.appendChild(nextBook);
-		
-		
-		if (!is_title) {
-			// Add a tooltip to hold row of data as text (labels from header row)	
-			for (j = 0 ; j < headerRow.length; j++) {
-				titleText += headerRow[j] + ": " + dataRow[j] + "\n";
-			}
-			toolTip = makeSVG("title");
-			toolTip.innerHTML = titleText;
-			g.appendChild(toolTip);
-
-        // After a delay, add the book to the shelf
-        function shelveBook() {
-            shelf.appendChild(g);
-        };
-        setTimeout(shelveBook, delay);
-		stateMap.bookDrawDelay[shelf] += configMap.bookDrawDelay;
-		} else {
-			shelf.appendChild(g);
-		}
-		return bookAttrs.width;
-	};
-	
 	// Create an SVG. Parameters are type, and as many attributes as needed as an object
 	makeSVG = function(type, attrs){
 		var result = document.createElementNS("http://www.w3.org/2000/svg", type);
@@ -249,13 +195,13 @@ bsv.shelves = (function() {
 		}
 		return result;
 	};
-	
-	
-	makeInfoBox = function(svg_x, estWidth, bookCount){
+
+	// Add boolean is_comparison parameter: if false, return total mm instead of % diff
+	makeInfoBox = function(svg_x, estWidth, bookCount, is_comparison){
 		var infoBox = makeSVG("svg", configMap.shelfParams.statsBox()),
 			sconul	= bookCount * 27.8,
-			percentDiff, percentClass, percent, percentSconul,
-			shelfInfo, shelfTotal, estTotal;
+			percentDiff, mmDiff, percentClass, percent, percentSconul,
+			totalmm, booksTotal, shelfInfo, shelfTotal, estTotal;
 		
 		stateMap.stats.sconulWidth += sconul;	
 		svg_x	= svg_x - configMap.shelfParams.startX;
@@ -265,193 +211,283 @@ bsv.shelves = (function() {
 		percentSconul = percentageDifference(svg_x,sconul).toFixed(1) + "%";
 
 		percent = makeSVG("text", {
-			x 		: "15%",
-			y 		: "50%",
-			"class"	: percentClass
+			x 				: "50%",
+			y 				: "50%",
+			"text-anchor"	: "middle",
+			"class"			: percentClass
 		});
 		percent.innerHTML = percentDiff;
+
+		totalmm = makeSVG("text", {
+			x 				: "50%",
+			y 				: "50%",
+			"text-anchor"	: "middle",
+			"class"			: "mm"
+		});
+		totalmm.innerHTML = mmToMetres(svg_x);
+
+		booksTotal = makeSVG("text", {
+			x 				: "50%",
+			y 				: "62%",
+			"text-anchor"	: "middle",
+			"class"			: "booksTotal"
+		});
+		booksTotal.innerHTML = bookCount + " books";
 		
 		shelfInfo =  makeSVG("text", {
-			x 		: "3%",
-			y 		: "100%",
-			"class"	: "svgText"
+			x 				: "50%",
+			y 				: "100%",
+			"text-anchor"	: "middle",
+			"class"			: "svgText"
 		});
-		shelfInfo.innerHTML = bookCount + " books | SCONUL: " + sconul.toFixed() + "mm, " + percentSconul;
+		is_comparison	?	shelfInfo.innerHTML = bookCount + " books | SCONUL: " 
+							+ mmToMetres(sconul) + ", " + percentSconul
+						:	shelfInfo.innerHTML = "SCONUL: " 
+							+ mmToMetres(sconul) + " " + percentSconul + " diff."
 		
 		shelfTotal = makeSVG("text", {
-			x 		: "25%",
-			y 		: "62%",
+			x 				: "50%",
+			y 				: "62%",
+			"text-anchor"	: "middle",
 			"class"	: "svgText"
 		});
-		shelfTotal.innerHTML = "Measured: " + (svg_x).toFixed() + "mm";
+		shelfTotal.innerHTML = "Measured: " + mmToMetres(svg_x);
 				
 		estTotal = makeSVG("text", {
-			x 		: "25%",
-			y 		: "72%",
-			"class"	: "svgText"
+			x 				: "50%",
+			y 				: "72%",
+			"text-anchor"	: "middle",
+			"class"			: "svgText"
 		});
-		estTotal.innerHTML = "Estimated: " + (estWidth).toFixed() + "mm";	
+		estTotal.innerHTML = "Estimated: " + mmToMetres(estWidth);	
 
-		infoBox.appendChild(percent);
-		infoBox.appendChild(shelfInfo);
-		infoBox.appendChild(shelfTotal);
-		infoBox.appendChild(estTotal);	
+		if (is_comparison) {
+			infoBox.appendChild(percent);					
+			infoBox.appendChild(shelfTotal);
+			infoBox.appendChild(estTotal);	
+		} else {
+			infoBox.appendChild(totalmm);
+			infoBox.appendChild(booksTotal);
+		}
+		infoBox.appendChild(shelfInfo);	
 		stateMap.stats.update(bookCount, 1, svg_x, estWidth);		
 		return infoBox;	
 	};
+
+
+	makeBook = function(dataRow, svg_x, shelf, headerRow, widthCol, is_title) {
+
+		var	titleText 	= "",
+			actualWidthCol	= bsv.data.getParam("widthCol"),
+			heightCol	= bsv.data.getParam("heightCol"),
+			is_comparison = bsv.data.getParam("is_comparison"),
+			shelfHeight = configMap.shelfParams.bookSpace - 1,
+			bookAttrs 	= {},
+			delay		= stateMap.bookDrawDelay[shelf],
+			actualWidth, percentDiff, g, nextBook, j, toolTip
+			;
+
+		actualWidth	= Number(dataRow[actualWidthCol]),
+
+		bookAttrs.width  = Number(dataRow[widthCol]);
+		bookAttrs.height = Number(dataRow[heightCol])*10;
+		bookAttrs.x		 = svg_x;
+		bookAttrs.y		 = shelfHeight - bookAttrs.height;		
+		bookAttrs.width  > 32   ? bookAttrs["class"] =  "thick" : bookAttrs["class"] =  "thin";
+		bookAttrs.height > 220  ? bookAttrs["class"] += " tall" : bookAttrs["class"] += " short";
+
+	// *** COME BACK TO THIS. BRANCHING LOGIC IF COMPARISON. NEED TO OVERLAY BOOKS WITH
+	// SEMI-TRANSPARANT RED MASK ON THIRD ITERATION.
+
+		if (is_comparison) {
+			if (stateMap.fillBay_iteration == 2) {		
+				percentDiff = percentageDifference(actualWidth, bookAttrs.width);
+				mmDiff = actualWidth - bookAttrs.width;
+				if (percentDiff > 20) {
+					bookAttrs["class"] = "badbook";
+				} else if (percentDiff < -20) {
+					bookAttrs["class"] = "badminus";
+				} else {
+					stateMap.bookDrawDelay[shelf] += configMap.bookDrawDelay;
+					return bookAttrs.width;
+				}
+			}		
+		}
+		
+		// Create a <g> element to hold each book and tooltip
+		g = makeSVG("g");     
+
+		// Create a <rect> element to draw book
+		nextBook = makeSVG("rect", bookAttrs);
+		g.appendChild(nextBook);
+
+		// If not title splash, add metadata and delay		
+		if (!is_title) {
+			// Add a tooltip to hold row of data as text (labels from header row)	
+			for (j = 0 ; j < headerRow.length; j++) {
+				titleText += headerRow[j] + ": " + dataRow[j] + "\n";
+			}
+			toolTip = makeSVG("title");
+			toolTip.innerHTML = titleText;
+			g.appendChild(toolTip);
+
+			// After a delay, add the book to the shelf
+			function shelveBook() {
+				shelf.appendChild(g);
+			};
+			setTimeout(shelveBook, delay);
+			stateMap.bookDrawDelay[shelf] += configMap.bookDrawDelay;
+		} else {
+			shelf.appendChild(g);
+		}
+		return bookAttrs.width;
+	};
+// makeBook FUNCTION ENDS
+
+
+	getWidthColAndDiv = function (params){
+	// Determine whether (a) true data (b) estimated (c) comparison.
+	// Returns widthCol and div values in an object,
+	// accessed via thisBay.widthCol and thisBay.targetDiv.	
+
+		var i		= stateMap.baysFilled,
+			result	= {};
+		
+		targetDiv 	= configMap.comparison.div[i];
+		widthCol	= configMap.comparison.widthCol[i];
+		// (a) true data if there's no estWidth column
+		if (!params.estWidth) {
+			result.targetDiv = jqueryMap[targetDiv];
+			result.widthCol  = params.widthCol;
+			return result;
+		} 
+		// (b) estimated if there's a width column
+		else if (params.estWidth && params.widthCol <= 0){
+			result.targetDiv = jqueryMap[targetDiv];
+			result.widthCol  = params.marcWidthCol;
+			return result;
+		}
+		// (c) otherwise it must be a comparison
+		else {
+			result.targetDiv = jqueryMap[targetDiv];
+			result.widthCol	 = params[widthCol];
+			return result;
+		}
+	};
 	
-	// optional boolean 'is_title' parameter. If included, draws pared-down shelf for 
-	// start screen
-	
-	fillBay = function (data, i, shelfCount, div, trueWidth, is_title){
+	fillBay = function (data, i, shelfCount, params, is_title){
 	  	var svg_x       = configMap.shelfParams.startX,
 			start_x     = configMap.shelfParams.startX,
 			shelfSpace	= configMap.shelfParams.totalWidth,
-			shelfIDs	= bsv.data.getParams("shelf_id"),
-			shelfCol	= bsv.data.getParams("shelfCol"),
+			shelfIDs	= params["shelf_id"],
+			shelfCol	= params["shelfCol"],
 			bookCount	= 0,
 			bay			= stateMap.baysFilled,
 			estWidth	= 0,
 			headers		= data[0],
 			colCount	= headers.length-1,
-			width, shelf, infoBox, percent, shelfTotal, estTotal;
-		  
-		shelfCount++;
-		shelf = document.getElementById(makeShelf(bay, shelfCount, div));
-		stateMap.bookDrawDelay[shelf] = configMap.bookDrawDelay;
+			is_comparison = params["is_comparison"],
+			targetDiv, widthCol, width, shelf, infoBox, percent, shelfTotal, estTotal,
+			thisBay
+		;
+
+		thisBay = getWidthColAndDiv(params);
+		is_title 	? targetDiv = $(".titleSVG") 
+					: targetDiv = thisBay.targetDiv;
 		
-	  // loop over data file
+	// Start creating shelves and books
+		shelfCount++;
+		shelf = document.getElementById(makeShelf(bay, shelfCount, targetDiv));
+		stateMap.bookDrawDelay[shelf] = configMap.bookDrawDelay;	
+		
+	// Loop over data file to create books
 		while (i <= data.length-1) {
-			width = makeBook(data[i], svg_x, shelf, headers, trueWidth, is_title);
+			width = makeBook(data[i], svg_x, shelf, headers, thisBay.widthCol, is_title);
 	
 			// Update x position for next book, with 1mm space between, and track estWidth
 			svg_x = svg_x + width + 1;
-			estWidth = estWidth + Number(data[i][data[i].length - 1]) + 1;
+			if (is_comparison) {estWidth = estWidth + Number(data[i][data[i].length - 1]) + 1;}
 			bookCount++;
 			
 			// If no more data, log stats and return
 			if (i == data.length-1) {
-				if (trueWidth) {
-					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
-					jqueryMap.$info.append(infoBox);	
-					console.log(stateMap.stats.output());					
-				}
-				stateMap.baysFilled++;
+				if (stateMap.baysFilled === 0) {
+					stateMap.baysFilled = 1;
+					infoBox = makeInfoBox (svg_x, estWidth, bookCount, is_comparison);
+					jqueryMap.$info.append(infoBox);
+					jqueryMap.$header.text(stateMap.stats.header(is_comparison));
+//					console.log(stateMap.stats.output());
+				};
+				stateMap.fillBay_iteration++;
 				return stateMap.shelves_rendered = true;						
 			};
 			i++;
 			
 			// If user has selected a shelf ID column, continue until it changes
-			if (shelfIDs[0]) {
+			if (shelfIDs != null) {
 				// Check if next book has a different shelf ID
 				if (data[i][shelfCol] !== shelfIDs[shelfCount]){
-					if (is_title) {return};
-					if (trueWidth) {
-						infoBox = makeInfoBox (svg_x, estWidth, bookCount);
-						jqueryMap.$info.append(infoBox);
-					}					
+					if (is_title) {return;}
+					infoBox = makeInfoBox (svg_x, estWidth, bookCount, is_comparison);
+					jqueryMap.$info.append(infoBox);		
 					break;			
 				}
 			// Otherwise continue until shelf is full, then log stats and end loop
 			} else if (svg_x + width > (shelfSpace - start_x)) {
-				if (trueWidth) {
-					infoBox = makeInfoBox (svg_x, estWidth, bookCount);
-					jqueryMap.$info.append(infoBox);
-				}
+				infoBox = makeInfoBox (svg_x, estWidth, bookCount, is_comparison);
+				jqueryMap.$info.append(infoBox);
 				break;
 			}; 		
-		}
+		} // End loop
 		
 		// Create and fill further shelf if there's still more data
 		if (i < data.length) {
-			return fillBay(data, i, shelfCount, div, trueWidth);
+			return fillBay(data, i, shelfCount, params /*div, ***trueWidth****/);
 		} 
 
 	};	
+//	EXPERIMENTAL fillBay FUNCTION ENDS
+
 	
 	//----------------END DOM METHODS---------------------------------
 
 	//----------------BEGIN EVENT HANDLERS----------------------------
-	onClickToggle = function ( event ) {
-		toggleTest (stateMap.is_live_open);
-		return false;
-	};
 	
-	onClickRenderMeasured = function ( event ) {
+	onClickRender = function ( event ) {
 		if (stateMap.shelves_rendered === false) {
-			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testw, true);
-			jqueryMap.$btn4
-				.text('Clear')
-				.attr('title', 'Click to clear shelves');				
+			var data = bsv.data.getData(),
+				is_comparison = bsv.data.getParam("is_comparison"),
+				iterations, i;
+				
+			is_comparison ? iterations = 3 : iterations = 1;
+			for (i = 0 ; i < iterations ; i++) {			
+				fillBay(data, 1, 0, bsv.data.getAllParams());
+			}
+			jqueryMap.$render
+				.text('Clear shelves')
+				.attr('title', 'Click to clear shelves')
+				.removeClass('bsv-shelves-test-render')
+				.addClass('bsv-shelves-test-clear');
 			return false;
 		} else {
 			jqueryMap.$testw.empty();
 			jqueryMap.$testm.empty();			
 			jqueryMap.$info.empty();	
-			jqueryMap.$btn4
-				.text('Measured')
-				.attr('title', 'Click to render shelves with measured data');
-			jqueryMap.$btn5
-				.text('Estimated')
-				.attr('title', 'Click to render shelves with modelled data')				
+			jqueryMap.$render
+				.text('Fill shelves')
+				.attr('title', 'Click to render shelves with measured data')
+				.removeClass('bsv-shelves-test-clear')
+				.addClass('bsv-shelves-test-render');
+			jqueryMap.$header
+				.text('');
 			stateMap.shelves_rendered = false;
+			stateMap.baysFilled = 0;
+			stateMap.fillBay_iteration = 0;			
 			stateMap.stats.reset();
 			return false;
 		}		
 	};
 	
-	onClickRenderEstimated = function (event) {
-		if (stateMap.shelves_rendered === false) {
-			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testw, false);
-			jqueryMap.$btn5
-				.text('Clear')
-				.attr('title', 'Click to clear shelves');				
-			return false;
-		} else {
-			jqueryMap.$testm.empty();
-			jqueryMap.$testw.empty();
-			jqueryMap.$info.empty();	
-			jqueryMap.$btn5
-				.text('Estimated')
-				.attr('title', 'Click to render shelves with modelled data')
-			jqueryMap.$btn4
-				.text('Measured')
-				.attr('title', 'Click to render shelves with measured data');
-			stateMap.shelves_rendered = false;
-			stateMap.stats.reset();
-			return false;
-		}
-	};
-	
-	onClickRenderComparison = function (event) {
-		if (stateMap.shelves_rendered === false) {
-			var data = bsv.data.getData();
-			fillBay(data, 1, 0, jqueryMap.$testw, true);
-			fillBay(data, 1, 0, jqueryMap.$testm, false);
-			jqueryMap.$btn6
-				.text('Clear')
-				.attr('title', 'Click to clear shelves');				
-			return false;
-		} else {
-			jqueryMap.$testm.empty();
-			jqueryMap.$testw.empty();
-			jqueryMap.$info.empty();	
-			jqueryMap.$btn6
-				.text('Compare')
-				.attr('title', 'Click to compare measurements with modelled data')
-			jqueryMap.$btn5
-				.text('Estimated')
-				.attr('title', 'Click to render shelves with modelled data')
-			jqueryMap.$btn4
-				.text('Measured')
-				.attr('title', 'Click to render shelves with measured data');
-			stateMap.shelves_rendered = false;
-			stateMap.stats.reset();
-			return false;
-		}	
-	};	
 			
 	//----------------END EVENT HANDLERS------------------------------
 	
@@ -464,33 +500,47 @@ bsv.shelves = (function() {
 		setJqueryMap();
 				
 		// initialise buttons and bind click handlers
-		jqueryMap.$btn1
-			.text('Test')
-			.attr('title', 'Click to switch to test suite')
-			.click( onClickToggle );
-		
-		jqueryMap.$btn4
-			.text('Measured')
-			.attr('title', 'Click to render shelves with measured data')
-			.click( onClickRenderMeasured );
-			
-		jqueryMap.$btn5
-			.text('Estimated')
-			.attr('title', 'Click to render shelves with modelled data')
-			.click( onClickRenderEstimated );
 
-		jqueryMap.$btn6
-			.text('Compare')
-			.attr('title', 'Click to compare measurements with modelled data')
-			.click( onClickRenderComparison );
+		jqueryMap.$render
+			.text('Fill shelves')
+			.attr('title', 'Click to render shelves with measured data')
+			.click( onClickRender );
 			
-		toggleTest(true);
 
 	};
 	// End Public method /initModule/
 	
+	setDivWidth = function (is_comparison) {
+		var divs		= [	".bsv-shelves-test-width", 
+							".bsv-shelves-test-info", 
+							".bsv-shelves-test-MARC"],
+			comp_widths	= ["36vw", "13vw", "36vw"],
+			comp_lefts 	= ["7vw", "44vw", "57.9vw"],
+//				widths	= ["51.4vw", "18.6vw", "15vw"],
+//				lefts 	= ["7vw", "59.4vw", "78.9vw"],
+				widths	= ["44.8vw", "16.2vw", "12vw"],
+				lefts 	= ["19vw", "64.8vw", "81.9vw"],
+
+
+		 	i, div, targetDiv;
+	 				
+		for (i = 0 ; i < lefts.length ; i++){
+			$class = divs[i];
+			if (is_comparison) {
+				$($class).width(comp_widths[i]);
+				$($class).css("left", comp_lefts[i]);
+			} else {
+				$($class).width(widths[i]);
+				$($class).css("left", lefts[i]);
+			}
+		}
+		return true;
+	};
+	
+	
 	return { 
 		initModule 	: initModule, 
+		setDivWidth : setDivWidth,
 		fillBay		: fillBay
 		};
 	//----------------END PUBLIC METHODS------------------------------	

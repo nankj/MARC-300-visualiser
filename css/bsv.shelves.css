@@ -2,8 +2,9 @@
  * bsv.shelves.css
  * Shelves styles
 */
-.bsv-shelves-test, .bsv-shelves-live, .bsv-shelves-test-width, 
-.bsv-shelves-test-info, .bsv-shelves-test-MARC, .bsv-shelves-live-width,
+.bsv-shelves-test, .bsv-shelves-test-header, .bsv-shelves-live, .bsv-shelves-test-width, 
+.bsv-shelves-test-render, .bsv-shelves-test-clear, .bsv-shelves-test-info, 
+.bsv-shelves-test-header-text, .bsv-shelves-test-MARC, .bsv-shelves-live-width, 
 .bsv-shell-foot {
  	position: absolute;
  }
@@ -14,17 +15,78 @@
 	left:	0.3vw;
 	right:	0.3vw;
 	bottom:	0.3vw;
-	background: #D2D7D3;
+	background:	#dfdcd1;
 	overflow: scroll;
 }
+
+.bsv-shelves-test-header {
+	top:	0.3vw;
+	left:	0.3vw;
+	right:	0.3vw;
+	height:	150px;
+	padding: 10px;
+	background: #dfdcd1;
+}
+
+.bsv-shelves-test-header-text {
+	text-align: center;
+	padding: 18px;
+	left:	16vw;
+	top:	10px;
+	background: #dfdcd1;
+	font-size: 52px; 
+	color	: gray;
+	width:	68vw;
+	height:	80px;
+}
+
+.bsv-shelves-test-render {
+	text-align: center;
+	padding: 14px;
+	top:	380px;
+	margin-left: -150px;
+	left:	50%;
+	height: 80px;
+	width: 	350px;
+	background: #F2F1EF;
+	color	: gray;
+	font-size : 2.5em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.8s;
+}
+	.bsv-shelves-test-render:hover {
+		background: #5e5a56;
+		color	: #F2F1EF;
+	}
+
+.bsv-shelves-test-clear {
+	text-align: center;
+	padding: 10px;
+	top:	44px;
+	left:	7vw;
+	height: 50px;
+	width: 	180px;
+	background: #F2F1EF;
+	color	: gray;
+	font-size : 1.5em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background color 0.2s;
+}
+	.bsv-shelves-test-clear:hover {
+		background: #5e5a56;
+		color	: #F2F1EF;
+	}
+	
 
 .bsv-shelves-test-width, 
 .bsv-shelves-test-MARC,
 .bsv-shelves-test-info,
 .bsv-shelves-live-width {
-	top:	5vw;
+	top:	150px;
 	bottom: 0.3vw;
-	background: #D2D7D3;
+	background:	#dfdcd1;
 }
 
 .bsv-shelves-test-width {
@@ -35,7 +97,6 @@
 .bsv-shelves-test-info {
 	left: 44vw;
 	width: 13vw;
-	background: #D2D7D3;
 }
 
 .bsv-shelves-test-MARC {
@@ -93,7 +154,8 @@
 	}
 
 .badbook {
-  fill: #DB7093;
+	fill: #fe4164;
+/*  fill: #DB7093;*/
   fill-opacity: 0.5;
   transition: all 0.2s;
 }
@@ -101,14 +163,35 @@
 		fill-opacity: 0.8;
 	}
 
+.badminus {
+	fill: #9dc209;
+/*  fill: #DB7093;*/
+  fill-opacity: 0.5;
+  transition: all 0.2s;
+}
+	.badminus:hover{
+		fill-opacity: 0.9;
+	}
+
+
 .percent {
 	font-size: 86px; 
+	fill: gray;
+}
+
+.mm {
+	font-size: 52px; 
 	fill: gray;
 }
 
 .bad {
 	font-size: 86px; 
 	fill: darkred;
+}
+
+.booksTotal {
+	font-size: 1.6em; 
+	fill: darkgray;
 }
 
 .svgText {

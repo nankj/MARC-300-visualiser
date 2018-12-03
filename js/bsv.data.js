@@ -11,10 +11,21 @@ bsv.data = (function() {
 	var 
 		configMap = {
 			main_html : String()
-			+	'<div class="bsv-data-close">\<</div>'
-			+	'<div class="bsv-data-params">'
-				+	'<fieldset>'	
-				+		'<legend>Set parameters</legend>'
+			+'<div class = "bsv-data-wrapper">'
+			+	'<div class="bsv-data-close">X</div>'
+			+	'<div class="bsv-data-intro">'
+			+		'<h2>Choose a data source</h2>'
+			+		'<p>You can use the built-in example data, or upload a CSV file below.'
+			+		' Minimum requirement is a file with two columns: a unique item ID and'
+			+		' a MARC 300 (subfield a). The current version doesn\'t handle'
+			+		' the height (subfield c), but this is coming soon.</p>'
+			+		'<p>Indicate which column holds the MARC 300 data. This is zero-indexed, so'
+			+		' column A (first column) should be entered as 0.'
+			+		' For more details see <a>[placeholder link]</a>.'
+			+	'</div>'
+			+	'<div>'
+				+	'<fieldset class="bsv-data-params">'	
+				+		'<legend>Set other parameters</legend>'
 //				+		'<form id="data-params-form">'
 				+			'<div>'
 				+				'<label for="bsv-data-params-ppmm">Pages/mm:</label>'
@@ -25,51 +36,54 @@ bsv.data = (function() {
 				+				'<input type="text" id="bsv-data-params-clothpb"/>'
 				+			'</div>'
 				+			'<div>'
-				+				'<label for="bsv-data-params-enter"></label>'
-				+				'<button id="bsv-data-params-enter" class="button">Enter</button>'
+//				+				'<label for="bsv-data-params-enter"></label>'
+//				+				'<button id="bsv-data-params-enter" class="button">Enter</button>'
 				+			'</div>'
 //				+		'</form>'
 				+	'</fieldset>'
 			+	'</div>'
 			+	'<div>'
 			+		'<fieldset class="bsv-data-data">'	
-			+			'<legend>Choose data source</legend>'
+			+			'<legend>Upload CSV file</legend>'
 //			+			'<form>'
 			+				'<div>'
-			+					'<label for="bsv-data-data-enter">Example data</label>'
-			+					'<button id="bsv-data-data-enter" class="button">Use</button>'
-			+				'</div>'		
-			+				'<hr>'
-			+				'<div>'
-			+					'<label for="bsv-data-data-csv">Import CSV file</label><br>'
+//			+					'<label for="bsv-data-data-csv"></label><br>'
 			+					'<input type="file" name="File upload" id="bsv-data-data-csv" accept=".csv"/>'
 			+				'</div>'
-				+			'<div>'
-				+				'<label for="bsv-data-params-marcCol">MARC 300 col:</label>'
-				+				'<input type="text" id="bsv-data-params-marcCol" value="7"/>'
-				+			'</div>'	
-				+			'<div>'
-				+				'<label for="bsv-data-params-widthCol">Width col:</label>'
-				+				'<input type="text" id="bsv-data-params-widthCol" value="1"/>'
-				+			'</div>'
-				+			'<div>'
-				+				'<label for="bsv-data-params-heightCol">Height col:</label>'
-				+				'<input type="text" id="bsv-data-params-heightCol" value="2"/>'
-				+			'</div>'
-				+			'<div>'
-				+				'<label for="bsv-data-params-shelfCol">Shelf ID col:</label>'
-				+				'<input type="text" id="bsv-data-params-shelfCol" value="3"/>'
-				+			'</div>'				
+			+				'<p>Indicate which columns in your CSV file contain MARC 300 and other data.</p'
+			+				'<div class="bsv-data-params-columns">'
+			+					'<div id="marc-col">'
+			+						'<label class="column-label" for="bsv-data-params-marcCol">MARC 300:</label>'
+			+						'<input type="text" id="bsv-data-params-marcCol" value="3"/>'
+			+					'</div>'	
+			+					'<div id="width-col">'
+			+						'<label class="column-label" for="bsv-data-params-widthCol">Width:</label>'
+			+						'<input type="text" id="bsv-data-params-widthCol" value="6"/>'
+			+					'</div>'
+			+					'<div id="height-col">'
+			+						'<label class="column-label" for="bsv-data-params-heightCol">Height:</label>'
+			+						'<input type="text" id="bsv-data-params-heightCol" value="7"/>'
+			+					'</div>'
+			+					'<div id="shelf-col">'
+			+						'<label class="column-label" for="bsv-data-params-shelfCol">Shelf ID:</label>'
+			+						'<input type="text" id="bsv-data-params-shelfCol" value="9"/>'
+			+					'</div>'
+			+				'</div>'
 //			+			'</form>'
 			+		'</fieldset>'
-			+	'</div>',
-			dataSlider_extend_time		:	300,
-			dataSlider_retract_time		:	300,
-			dataSlider_extend_width		:	0,
-			dataSlider_retract_width	:	-415,
-			dataSlider_out_title		:	'Click to close',
-			dataSlider_in_title			:	'Click to change parameters',
+			+		'<fieldset class="bsv-data-example">'
+			+			'<legend>Use example data</legend>'			
+//			+				'<div>'
+//			+					'<label for="bsv-data-data-enter">Example data</label>'
+			+					'<div id="bsv-data-data-enter" class="button">Use</div>'
+//			+				'</div>'
+			+		'</fieldset>'	
+			+	'</div>'
+			+	'<div class="bsv-data-saveclose">Save and close</div>'
+			+'</div>',
+
 			average_page_count			:	'296 (est.)',
+
 //								0:Barcode,1:Item Number,2:Bib,3:300a,4:260c,5:Title,6:Width,7:Height,8:Binding,9:Shelf ID
 			exampleData	:	   [["Barcode","Item Number","Bib","MARC 300a","MARC 260c","Title","Width","Height","Binding","Shelf ID"],
 								["11046204","i10012199","b1001021x","0","","EARLY VATICINATION IN WELSH.","26.9","23","c","2.101A"],
@@ -127,17 +141,16 @@ bsv.data = (function() {
 		},
 		stateMap  = { 
 			$container 			: null,
-			is_dataSlider_in	: true,
 			shelf_id_exists 	: false
 		},
 		paramMap  = {},
 		bookData  = [],
 		jqueryMap =	{},
 		
-		setJqueryMap, toggleDataSlider, setParamMap, initModule,
+		setJqueryMap, setParamMap, initModule,
 		browserSupportFileUpload, uploadCSV, setExampleData, numberRange,
-		convertRoman, sumIntegers, marc300ToWidth, mapShelfIDs, getData, getParams,
-		onChangeUploadCSV, onClickParamBtn, onClickSlide, onClickExampleData;
+		convertRoman, sumIntegers, marc300ToWidth, mapShelfIDs, getData, getParam,
+		getAllParams, onChangeUploadCSV, onClickParamBtn, onClickClose, onClickExampleData;
 	//----------------END MODULE SCOPE VARIABLES----------------------
 	
 	//----------------BEGIN UTILITY METHODS---------------------------
@@ -183,6 +196,7 @@ bsv.data = (function() {
 		paramMap.widthCol	= 6;
 		paramMap.heightCol	= 7;
 		paramMap.shelfCol	= 9;
+		paramMap.is_comparison = true;
  		paramMap.ppmm		=	jqueryMap.$ppmm.val();
 		bookData = marc300ToWidth(configMap.exampleData, paramMap.marcCol);	
 		paramMap.shelf_id = mapShelfIDs(bookData);	
@@ -244,6 +258,13 @@ bsv.data = (function() {
 	// If we've run this procedure already, replaces contents of final column.
 	// Otherwise adds a column with estimated width.
 	marc300ToWidth = function(array, col) {
+	
+		// return immediately if no MARC col
+		if (col <= 0) {
+			setParam("estWidth", false);
+			return array;
+		}
+		
 		var regexRoman			= /[mdlcxvi]{1,6}(?= |,|-|p)/g,
 			regexNumberRange	= /([\d]{1,4})-([\d]{1,4})/g,
 			regexBadHyphens		= / ?(?:\-)(?: )?/g,
@@ -269,8 +290,13 @@ bsv.data = (function() {
 			// *4* add resulting width to end of row
 			array[i].push(result);
 		}
-		firstTime 	? array[0][totalCols+1]="MARC Width"
-					: array[0][totalCols]="MARC Width";
+
+		firstTime 	?	totalCols = totalCols + 1
+					:	totalCols;
+		array[0][totalCols]="MARC Width";	
+		setParam("marcWidthCol", totalCols);
+		setParam("estWidth", true);
+
 		return array;
 	};
 	
@@ -302,53 +328,13 @@ bsv.data = (function() {
 			$heightCol	:	$container.find( '#bsv-data-params-heightCol'),
 			$shelfCol	:	$container.find( '#bsv-data-params-shelfCol'),
 			$clothpb	:	$container.find( '#bsv-data-params-clothpb'),
-			$parambtn	:	$container.find( '#bsv-data-params-enter'),
+			$parambtn	:	$container.find( '.bsv-data-saveclose'),
 			$datacsv	:	$container.find( '#bsv-data-data-csv'),
 			$dataenter	:	$container.find( '#bsv-data-data-enter'),
 		};
 	};
 	// End DOM method /setJqueryMap/	
 
-	// Begin DOM method / toggleDataSlider /
-	// Purpose:		Opens and closes right-hand slider
-	// Arguments: 	
-	//		* do-extend  - if true, extends; if false, retracts slider
-	//		* callback   - optional function when slider open/closed
-	// Returns:	
-	//		* true
-	
-	toggleDataSlider = function ( do_extend, callback ) {
-	
-		if ( do_extend ) {
-			jqueryMap.$data.animate (
-				{right : configMap.dataSlider_extend_width},
-				configMap.dataSlider_extend_time,
-				function () {
-					jqueryMap.$closer
-					.attr('title', configMap.dataSlider_out_title)
-					.text('X');
-					stateMap.is_dataSlider_in = false;
-					if (callback) {callback (jqueryMap.$data);}
-				}
-			);
-			return true;
-		}
-			
-		jqueryMap.$data.animate (
-			{right : configMap.dataSlider_retract_width},
-			configMap.dataSlider_retract_time,
-			function () {
-				jqueryMap.$closer
-					.attr('title', configMap.dataSlider_in_title)
-					.text('<');
-				stateMap.is_dataSlider_in = true;
-				if (callback) {callback (jqueryMap.$data);}
-			}
-		);
-		return true;		
-	};
-	
-	// End DOM method / toggleDataSlider /
 
 	// Begin DOM method / setParamMap /
 	// Purpose:		Records updated parameters in paramMap
@@ -362,16 +348,24 @@ bsv.data = (function() {
 			clothpb		:	jqueryMap.$clothpb.val(),
 			widthCol	:	jqueryMap.$widthCol.val(),
 			heightCol	:	jqueryMap.$heightCol.val(),
-			shelfCol	:	jqueryMap.$shelfCol.val(),
+			shelfCol	:	jqueryMap.$shelfCol.val()
 		};
 		if (bookData[0]) {
-			bookData = marc300ToWidth(bookData, paramMap.marcCol);
+			bookData = marc300ToWidth(bookData, paramMap.marcCol);			
 			if (paramMap.shelfCol > 0) {
 				stateMap.shelf_id_exists = true; 
 				paramMap.shelf_id = mapShelfIDs(bookData);
-			} else { 
+				} else { 
 				stateMap.shelf_id_exists = false; 
 				paramMap.shelf_id = null;
+			};
+			
+			if (paramMap.widthCol > 0 && paramMap.estWidth) {
+				paramMap.is_comparison = true;
+				bsv.shelves.setDivWidth(true);
+				} else {
+				paramMap.is_comparison = false;
+				bsv.shelves.setDivWidth(false);
 			}
 		}
 	};
@@ -380,14 +374,15 @@ bsv.data = (function() {
 	//----------------END DOM METHODS---------------------------------
 
 	//----------------BEGIN EVENT HANDLERS----------------------------
-	onClickSlide = function (event) {
-		toggleDataSlider(stateMap.is_dataSlider_in);
+	onClickClose = function (event) {
+		setParamMap();
+		jqueryMap.$data.addClass('bsv-x-clearfloat');
 		return false;
 	};
 	
 	onClickParamBtn = function (event) {
 		setParamMap();
-		toggleDataSlider(false);
+		onClickClose();
 		return false;
 	};
 	
@@ -395,13 +390,12 @@ bsv.data = (function() {
 		setParamMap();
 		uploadCSV(event);
 		jqueryMap.$dataenter.text("Use");
-		toggleDataSlider(false);
 		return false;
 	};
 	
 	onClickExampleData = function (event) {
 		setExampleData();
-		toggleDataSlider(false);
+		jqueryMap.$dataenter.background("red");
 		return false;
 	};
 	
@@ -411,18 +405,20 @@ bsv.data = (function() {
 	//----------------BEGIN PUBLIC METHODS----------------------------
 	// Begin Public method /initModule/
 	initModule = function ( $container ) {
+		
 		// Load HTML and map jQuery collections
 		stateMap.$container = $container;
 		$container.html( configMap.main_html );
 		setJqueryMap();
-		// Load up example dataset
-
+		
+		// Load up parameters and example dataset
 		setParamMap();
 		setExampleData();
-		// Initialise slider and bind event handlers
+		
+		// Bind event handlers
 		jqueryMap.$closer
-			.attr('title', configMap.dataSlider_in_title)
-			.click( onClickSlide );
+			.attr('title', 'Save and close')
+			.click( onClickClose );
 			
 		jqueryMap.$parambtn
 			.click( onClickParamBtn );
@@ -441,20 +437,25 @@ bsv.data = (function() {
 		return bookData;
 	};
 	
-	getParams	= function (param) {
+	getParam	= function (param) {
 		return paramMap[param];
 	};
 	
 	setParam = function (param, val)	{
 		paramMap[param] = val;
 	};
+	
+	getAllParams = function (){
+		return paramMap;
+	};
 
 	
 	return { 
-		initModule 	: initModule,
-		getData		: getData,
-		getParams	: getParams,
-		setParam	: setParam
+		initModule 		: initModule,
+		getData			: getData,
+		getParam		: getParam,
+		setParam		: setParam,
+		getAllParams	: getAllParams
 		};
 	//----------------END PUBLIC METHODS------------------------------	
 }());
