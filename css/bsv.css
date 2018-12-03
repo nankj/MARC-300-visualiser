@@ -20,14 +20,17 @@
 
 /** Begin standard selectors */
 body {
-	font: 				15px   Avenir Next, Avenir, sans-serif;
+	font: 				16px   Avenir Next, Avenir, sans-serif;
 	color:				#444;
 	background-color:	#888;
 }
 
 a {	text-decoration: none; }
 	a:link, a:visited { color: inherit; } 
-	a:hover { text-decoration: underline; }
+	a:hover { 
+		text-decoration: underline; 
+		cursor: pointer;
+	}
 	
 strong {
 	font-weight: 800;
@@ -39,11 +42,6 @@ strong {
 /** Begin bsv namespace selectors */
 #bsv {
 	position: 	absolute;
-/*	top:		0.6vw;
-	left:		0.6vw;
-	bottom:		0.6vw;
-	right:		0.6vw;
-*/	
 	top:		0;
 	left:		0;
 	bottom:		0;
@@ -54,7 +52,6 @@ strong {
 	overflow:	hidden;
 	
 	background-color: 	#fff;
-	border-radius:		0 8px 0 8px;
 }
 /** End bsv namespace selectors */
 

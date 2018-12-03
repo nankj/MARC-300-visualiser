@@ -2,10 +2,15 @@
  * bsv.data.css
  * Slider styles
  */
+.bsv-data-wrapper, h2, p {
+	position: relative;
+	text-align: left;
+	margin-bottom: 15px;
+}
  
-.bsv-data-close,
-.bsv-data-params,
-.bsv-data-data {
+.bsv-data-close, .bsv-data-params,
+.bsv-data-intro, .bsv-data-saveclose,
+.bsv-data-data, .bsv-data-example {
  	position: absolute;
  	font-size:	20px;
  }
@@ -14,8 +19,7 @@
 	margin: 20px 0 0 45px;
 	left: -25px;
 	padding:	4px 6px 1px 6px;	
-/*	border-radius: 5px;*/
-	border-radius: 50% 0 0 50%;
+	border-radius: 5px;
 }
 	.bsv-data-close:hover {
 		background: darkred;
@@ -23,54 +27,152 @@
 		color:		white;
 	}
 
-.bsv-data-params, .bsv-data-data {
-	left: 		35px;
+.bsv-data-intro {
+	top: 		20px;
+	left: 		20px;
 	right:		20px;
-	padding: 0 0 35px 0;
+	height:		190px;
+    padding: 	0 35px 0 0;
+    margin: 	35px 0 0 35px;
 }
 
-.bsv-data-params { 
-	top:	70px;
+.bsv-data-example {
+	top: 		280px;
+	left: 		465px;
+	right:		35px;
+	height:		105px;
+	padding: 	0 0 0 35px;
 }
 
-.bsv-data-data { 
-	top:	320px;
+.bsv-data-params {
+	top: 		395px;
+	left: 		465px;
+	right:		35px;
+	height:		155px;
+	padding: 	0 0 0 35px;
 }
 
-hr{
-	margin: 0px 30px;
+.bsv-data-data {
+	top: 		280px;
+	left: 		35px;
+	right:		455px;
+	height:		270px;
+	padding: 	10px 5px;
 }
+
+.bsv-data-data p {
+	padding: 	0 15px;
+	font-size: 0.8em;
+}
+
+.bsv-data-params-columns {
+	overflow: hidden;
+	width: 80%;
+}
+
+#marc-col, #width-col,
+#height-col, #shelf-col {
+	width: 49%;
+}
+
+#marc-col, #shelf-col {
+	float: left;
+	padding: 0 0 0 10px;
+}
+
+#height-col, #width-col {
+	float: right;
+}
+
 
 legend {
     color: #fff;
     padding: 3px 6px;
 }
 
-input,
-label,
-button {
-    width: 	43%;
- 	padding: 15px;
- 	font-size: 0.8em;
+button, label {
+	width: 50%;
+	padding: 8px;
+	font-size: 0.8em;
+}
+
+.column-label{
+	width: 115px;
+	padding: 5px 10px 5px 5px;
+	font-size: 0.8em;
+	text-align: right;
 }
 
 input {
+    width: 	40px;
+ 	padding: 15px;
+ 	font-size: 0.8em;
     margin: .5rem 0;
     padding: .5rem;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
+.bsv-data-params input {
+	width:	100px;
+}
+
 label {
     display: inline-block;
 }
 
-.button {
+button {
     margin: 15px 0 25px 0;
     background:	darkgray;
 }
+
+#bsv-data-data-enter {		
+	text-align: center;
+	margin-top: 10px;
+	padding: 7px;
+	height: 35px;
+	width: 	40%;
+	min-width: 100px;
+	background: #bcb9ad;
+/*	background: #a29f95;*/
+	color	: black;
+	font-size : 0.8em;
+	border: 1px solid #dddddd;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background color 0.2s;
+}
+	.bsv-data-data-enter:hover {
+		background: #5e5a56;
+		color	: #F2F1EF;
+	}	
+
 
 #bsv-data-data-csv {
 	margin:	0 0 15px 15px;
 	width:	83.5%;
 }
+	#bsv-data-data-csv:hover {
+		cursor: pointer;
+	}
+
+.bsv-data-saveclose {
+	text-align: center;
+	padding: 10px;
+	top:	570px;
+	margin-left: 36%;
+	height: 50px;
+	width: 	28%;
+	min-width: 100px;
+	background: #F2F1EF;
+	color	: gray;
+	font-size : 1.5em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background color 0.2s;
+}
+	.bsv-data-saveclose:hover {
+		background: #5e5a56;
+		color	: #F2F1EF;
+	}
+
