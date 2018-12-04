@@ -36,7 +36,7 @@ bsv.shell = (function() {
 			+		'still very much under development, and the data collection that forms the basis of this '
 			+		'research is still ongoing. So at present (Dec \'18) any results it gives are probably wrong, '
 			+		'and certainly provisional. Watch out for developments here!</p>'
-			+	'<div class="bsv-shell-intro-modal-exampledata"></div>'
+//			+	'<div class="bsv-shell-intro-modal-exampledata"></div>'
 			+	'<div class="bsv-shell-intro-modal-choosedata"></div>'		
 			+	'</div>'
 			+	'</div>'
@@ -98,7 +98,7 @@ bsv.shell = (function() {
 			$startSVG	: $container.find( '.bsv-shell-start-SVG'),
 			$startbtn	: $container.find( '.bsv-shell-start-button'),
 			$intro		: $container.find( '.bsv-shell-intro-modal'),
-			$introbtn1	: $container.find( '.bsv-shell-intro-modal-exampledata'),
+//			$introbtn1	: $container.find( '.bsv-shell-intro-modal-exampledata'),
 			$introbtn2	: $container.find( '.bsv-shell-intro-modal-choosedata'),
 			$headbtns	: $container.find( '.bsv-shell-head-btn'),
 			$btn1		: $container.find( '#btn1' ),					
@@ -234,10 +234,10 @@ bsv.shell = (function() {
 			.attr('title', 'Turn your data into bookshelves')
 			.click( onClickStart );
 
-		jqueryMap.$introbtn1
-			.text('Use example')
-			.attr('title', 'Use example data')
-			.click( onClickCloseIntro );
+//		jqueryMap.$introbtn1
+//			.text('Use example')
+//			.attr('title', 'Use example data')
+//			.click( onClickCloseIntro );
 
 		jqueryMap.$introbtn2
 			.text('Select data')

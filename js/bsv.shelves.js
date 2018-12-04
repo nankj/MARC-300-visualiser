@@ -100,12 +100,12 @@ bsv.shelves = (function() {
 				},
 				header		: function ( is_comparison ){
 					var result 	= this.totalShelves + " shelves, "
-								+ this.totalBooks 	+ " books | "
-								+ " total: " + mmToMetres(this.trueWidth);
+								+ this.totalBooks 	+ " books, "
+								+ mmToMetres(this.trueWidth);
 					if (is_comparison) {
-						var append 	= " | est: " + mmToMetres(this.estWidth)
-									+ " | " + percentageDifference(this.trueWidth, this.estWidth).toFixed(1)
-									+ "% diff.";
+						var append 	= " (est. " + mmToMetres(this.estWidth)
+									+ ", " + percentageDifference(this.trueWidth, this.estWidth).toFixed(1)
+									+ "% diff.)";
 						result += append;
 					}
 					return result;
@@ -415,7 +415,8 @@ bsv.shelves = (function() {
 					stateMap.baysFilled = 1;
 					infoBox = makeInfoBox (svg_x, estWidth, bookCount, is_comparison);
 					jqueryMap.$info.append(infoBox);
-					jqueryMap.$header.text(stateMap.stats.header(is_comparison));
+					jqueryMap.$header.text(stateMap.stats.header(is_comparison))
+							 		 .css("background", "#F2F1EF");
 //					console.log(stateMap.stats.output());
 				};
 				stateMap.fillBay_iteration++;
@@ -446,7 +447,7 @@ bsv.shelves = (function() {
 		} 
 
 	};	
-//	EXPERIMENTAL fillBay FUNCTION ENDS
+// fillBay FUNCTION ENDS
 
 	
 	//----------------END DOM METHODS---------------------------------
@@ -472,7 +473,8 @@ bsv.shelves = (function() {
 		} else {
 			jqueryMap.$testw.empty();
 			jqueryMap.$testm.empty();			
-			jqueryMap.$info.empty();	
+			jqueryMap.$info.empty();
+			jqueryMap.$header.css("background", "#dfdcd1");
 			jqueryMap.$render
 				.text('Fill shelves')
 				.attr('title', 'Click to render shelves with measured data')
