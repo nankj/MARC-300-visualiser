@@ -36,6 +36,7 @@
 	background: #dfdcd1;
 	border-radius: 5px;
 	font-size: calc(32vmin / 8.5); 
+	font-weight: 300;
 	color	: gray;
 	width:	58vw;
 	height:	85px;
